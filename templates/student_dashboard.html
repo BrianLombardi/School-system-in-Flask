@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <header>
+            <h1>Student Dashboard</h1>
+            <nav>
+                <ul>
+                    <li><a href="{{ url_for('student_profile') }}">Profile</a></li>
+                    <li><a href="{{ url_for('student_courses') }}">My Courses</a></li>
+                    <li><a href="{{ url_for('student_grades') }}">Grades</a></li>
+                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <section class="overview">
+                <h2>Welcome, {{ student_name }}</h2>
+                <p>Here’s an overview of your courses and upcoming assignments.</p>
+                <!-- Student-specific content can go here -->
+            </section>
+            <section class="assignments">
+                <h2>Upcoming Assignments</h2>
+                <ul>
+                    <li><a href="{{ url_for('assignment_detail', assignment_id=1) }}">Assignment 1</a></li>
+                    <li><a href="{{ url_for('assignment_detail', assignment_id=2) }}">Assignment 2</a></li>
+                    <!-- List of assignments dynamically generated -->
+                </ul>
+            </section>
+        </main>
+    </div>
+</body>
+</html>

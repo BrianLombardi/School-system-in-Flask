@@ -52,7 +52,6 @@ class Materia(db.Model):
 # Função para criar o banco de dados e o administrador
 def create_db():
     db.create_all()
-    # Criação do usuário administrador padrão
     if not User.query.filter_by(email='admin@exemplo.com').first():
         hashed_password = generate_password_hash("Abc123hy")
         admin_user = User(fullname="Admin", email="admin@exemplo.com", password=hashed_password, is_admin=True)
@@ -72,13 +71,15 @@ def login():
         
         user = User.query.filter_by(email=email).first()
         if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id  # Armazena o ID do usuário na sessão
+            session['user_id'] = user.id
             session['is_admin'] = user.is_admin
             flash('Login realizado com sucesso!', 'success')
             if user.is_admin:
                 return redirect(url_for('admin_dashboard'))
+            elif any(cargo.nome == 'Professor' for cargo in user.cargos):
+                return redirect(url_for('teacher_dashboard'))
             else:
-                return redirect(url_for('index'))
+                return redirect(url_for('student_dashboard'))
         else:
             flash('E-mail ou senha incorretos.', 'danger')
             return redirect(url_for('login'))
@@ -114,15 +115,30 @@ def register():
 
 @app.route('/admin')
 def admin_dashboard():
-    # Verifica se o usuário logado é um administrador
     if 'user_id' in session and session.get('is_admin'):
-        turmas = Turma.query.all()  # Recupera todas as turmas
-        cargos = Cargo.query.all()  # Recupera todos os cargos
-        users = User.query.all()  # Recupera todos os usuários
-        materias = Materia.query.all()  # Recupera todas as matérias
+        turmas = Turma.query.all()
+        cargos = Cargo.query.all()
+        users = User.query.all()
+        materias = Materia.query.all()
         return render_template('admin_dashboard.html', turmas=turmas, users=users, cargos=cargos, materias=materias)
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
+        return redirect(url_for('login'))
+
+@app.route('/teacher_dashboard')
+def teacher_dashboard():
+    if 'user_id' in session and not session.get('is_admin'):
+        return render_template('teacher_dashboard.html', teacher_name=session.get('fullname'))
+    else:
+        flash("Acesso negado. Faça login como professor para acessar essa página.", "danger")
+        return redirect(url_for('login'))
+
+@app.route('/student_dashboard')
+def student_dashboard():
+    if 'user_id' in session and not session.get('is_admin'):
+        return render_template('student_dashboard.html', student_name=session.get('fullname'))
+    else:
+        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
         return redirect(url_for('login'))
 
 @app.route('/create_turma', methods=['POST'])
@@ -198,7 +214,6 @@ def add_user_to_turma(turma_id):
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
 
-# Rota para deletar um usuário
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -216,12 +231,11 @@ def delete_user(user_id):
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
 
-# Rota de logout
 @app.route('/logout')
 def logout():
-    session.clear()  # Limpa a sessão do usuário
+    session.clear()
     flash('Você saiu com sucesso.', 'success')
-    return redirect(url_for('index'))  # Redireciona para a página principal
+    return redirect(url_for('index'))
 
 if __name__ == '__main__':
     with app.app_context():

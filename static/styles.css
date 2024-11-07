@@ -1,0 +1,142 @@
+/* Estilização geral */
+body {
+    background-color: #1a1a1a; /* Cor de fundo mais escura */
+    color: #ffffff; /* Cor do texto em branco */
+    font-family: Arial, sans-serif; /* Fonte padrão */
+}
+
+.container {
+    max-width: 1200px; /* Largura máxima do container */
+    margin: auto; /* Centraliza o container */
+    padding: 15px; /* Espaçamento interno */
+}
+
+/* Sidebar */
+#wrapper {
+    display: flex;
+    width: 100%;
+    transition: all 0.5s ease;
+}
+
+#sidebar-wrapper {
+    min-height: 100vh; /* Altura mínima da sidebar */
+    width: 250px; /* Largura da sidebar */
+    background-color: #2a2a2a; /* Cor de fundo da sidebar */
+}
+
+.sidebar-heading {
+    font-size: 1.5rem; /* Tamanho do título da sidebar */
+    color: #ffffff; /* Cor do título da sidebar */
+    text-align: center; /* Centraliza o texto */
+}
+
+/* Efeito hover para os itens da sidebar */
+.list-group-item {
+    border: none; /* Remove borda */
+}
+
+.list-group-item:hover {
+    background-color: #0056b3; /* Efeito de hover */
+    color: #ffffff; /* Cor do texto em hover */
+}
+
+/* Formulários */
+form {
+    background-color: #2a2a2a; /* Fundo do formulário */
+    padding: 20px; /* Espaçamento interno */
+    border-radius: 5px; /* Bordas arredondadas */
+}
+
+.form-group {
+    margin-bottom: 1.5rem; /* Margem inferior para os grupos de formulário */
+}
+
+label {
+    color: #ffffff; /* Cor dos rótulos */
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+textarea {
+    width: 100%; /* Largura total */
+    padding: 10px; /* Espaçamento interno */
+    border: 1px solid #007bff; /* Borda do campo */
+    border-radius: 5px; /* Bordas arredondadas */
+    background-color: #1a1a1a; /* Fundo dos campos */
+    color: #ffffff; /* Cor do texto */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+textarea:focus {
+    border-color: #0056b3; /* Borda ao focar */
+    outline: none; /* Remove o contorno padrão */
+}
+
+/* Mensagens de feedback */
+.alert {
+    margin-top: 20px; /* Espaço acima das mensagens */
+    padding: 15px; /* Espaçamento interno */
+    border-radius: 5px; /* Bordas arredondadas */
+}
+
+.alert-success {
+    background-color: #4CAF50; /* Cor de fundo para sucesso */
+    color: white; /* Cor do texto */
+}
+
+.alert-danger {
+    background-color: #f44336; /* Cor de fundo para erro */
+    color: white; /* Cor do texto */
+}
+
+/* Tabelas */
+table {
+    width: 100%; /* Largura total */
+    border-collapse: collapse; /* Remove espaços entre células */
+    margin-top: 20px; /* Espaço acima da tabela */
+}
+
+th, td {
+    padding: 12px; /* Espaçamento interno nas células */
+    text-align: left; /* Alinhamento à esquerda */
+    border-bottom: 1px solid #007bff; /* Borda inferior */
+}
+
+th {
+    background-color: #0056b3; /* Cor do cabeçalho da tabela */
+    color: #ffffff; /* Cor do texto do cabeçalho */
+}
+
+/* Footer */
+footer {
+    margin-top: 20px; /* Espaço acima do footer */
+    padding: 10px; /* Espaçamento interno */
+    background-color: #2a2a2a; /* Cor de fundo do footer */
+    text-align: center; /* Centraliza o texto */
+    color: #ffffff; /* Cor do texto */
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .sidebar-heading {
+        font-size: 1rem; /* Reduz o tamanho da fonte em telas menores */
+    }
+
+    h1 {
+        font-size: 2rem; /* Reduz o tamanho do título em telas menores */
+    }
+}
+
+/* Estilização do cabeçalho */
+#page-content-wrapper {
+    flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
+    padding: 20px; /* Espaçamento interno */
+}
+
+/* Estilização do botão toggle */
+#menu-toggle {
+    margin-left: auto; /* Alinha o botão à direita */
+}

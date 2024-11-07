@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Dashboard</h2>
+
+<h3>Alunos</h3>
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Endereço</th>
+            <th>Contato</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for aluno in alunos %}
+        <tr>
+            <td>{{ aluno.id }}</td>
+            <td>{{ aluno.nome }}</td>
+            <td>{{ aluno.endereco }}</td>
+            <td>{{ aluno.contato }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Adicionar Aluno</h3>
+<form method="POST" action="{{ url_for('add_aluno') }}">
+    <input type="text" name="nome" placeholder="Nome" required>
+    <input type="text" name="endereco" placeholder="Endereço">
+    <input type="text" name="contato" placeholder="Contato">
+    <button type="submit" class="btn btn-primary">Adicionar</button>
+</form>
+
+<h3>Professores</h3>
+<table class="table table-dark">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Especialização</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for professor in professores %}
+        <tr>
+            <td>{{ professor.id }}</td>
+            <td>{{ professor.nome }}</td>
+            <td>{{ professor.especializacao }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<h3>Adicionar Professor</h3>
+<form method="POST" action="{{ url_for('add_professor') }}">
+    <input type="text" name="nome" placeholder="Nome" required>
+    <input type="text" name="especializacao" placeholder="Especialização">
+    <button type="submit" class="btn btn-primary">Adicionar</button>
+</form>
+{% endblock %}

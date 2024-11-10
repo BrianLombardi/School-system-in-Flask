@@ -49,28 +49,7 @@ class Materia(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
     carga_horaria = db.Column(db.Integer, nullable=False)
-@app.route('/assignment_detail/<int:assignment_id>')
-def assignment_detail(assignment_id):
-    if 'user_id' in session and not session.get('is_admin'):
-        assignment = Assignment.query.get(assignment_id)
-        if not assignment:
-            flash('Assignment not found.', 'danger')
-            return redirect(url_for('student_dashboard'))
-        return render_template('assignment_detail.html', assignment_id=assignment_id)
-    else:
-        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
-        return redirect(url_for('login'))
-
-# Função para criar o banco de dados e o administrador
-def create_db():
-    db.create_all()
-    if not User.query.filter_by(email='admin@exemplo.com').first():
-        hashed_password = generate_password_hash("Abc123hy")
-        admin_user = User(fullname="Admin", email="admin@exemplo.com", password=hashed_password, is_admin=True)
-        db.session.add(admin_user)
-        db.session.commit()
-        print("Usuário administrador criado com sucesso.")
-
+# Rotas e funcionalidades
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -151,6 +130,18 @@ def student_dashboard():
     else:
         flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
         return redirect(url_for('login'))
+@app.route('/assignment_detail/<int:assignment_id>')
+def assignment_detail(assignment_id):
+    if 'user_id' in session and not session.get('is_admin'):
+        assignment = Assignment.query.get(assignment_id)
+        if not assignment:
+            flash('Assignment not found.', 'danger')
+            return redirect(url_for('student_dashboard'))
+        return render_template('assignment_detail.html', assignment=assignment)
+    else:
+        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
+        return redirect(url_for('login'))
+
 @app.route('/create_turma', methods=['POST'])
 def create_turma():
     if 'user_id' in session and session.get('is_admin'):
@@ -176,7 +167,6 @@ def create_cargo():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/create_materia', methods=['POST'])
 def create_materia():
     if 'user_id' in session and session.get('is_admin'):
@@ -190,6 +180,7 @@ def create_materia():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 @app.route('/assign_professor_to_materia/<int:materia_id>', methods=['POST'])
 def assign_professor_to_materia(materia_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -206,7 +197,6 @@ def assign_professor_to_materia(materia_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/add_user_to_turma/<int:turma_id>', methods=['POST'])
 def add_user_to_turma(turma_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -245,29 +235,14 @@ def logout():
     session.clear()
     flash('Você saiu com sucesso.', 'success')
     return redirect(url_for('index'))
-@app.route('/student_profile')
-def student_profile():
-    if 'user_id' in session and not session.get('is_admin'):
-        return render_template('student_profile.html', student_name=session.get('fullname'))
-    else:
-        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
-        return redirect(url_for('login'))
-
-@app.route('/student_courses')
-def student_courses():
-    if 'user_id' in session and not session.get('is_admin'):
-        return render_template('student_courses.html', student_name=session.get('fullname'))
-    else:
-        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
-        return redirect(url_for('login'))
-
-@app.route('/student_grades')
-def student_grades():
-    if 'user_id' in session and not session.get('is_admin'):
-        return render_template('student_grades.html', student_name=session.get('fullname'))
-    else:
-        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
-        return redirect(url_for('login'))
+def create_db():
+    db.create_all()
+    if not User.query.filter_by(email='admin@exemplo.com').first():
+        hashed_password = generate_password_hash("Abc123hy")
+        admin_user = User(fullname="Admin", email="admin@exemplo.com", password=hashed_password, is_admin=True)
+        db.session.add(admin_user)
+        db.session.commit()
+        print("Usuário administrador criado com sucesso.")
 
 if __name__ == '__main__':
     with app.app_context():

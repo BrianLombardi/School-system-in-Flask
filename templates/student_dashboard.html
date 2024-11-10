@@ -5,43 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $("#menu-toggle").click(function (e) {
+                e.preventDefault();
+                $("#wrapper").toggleClass("toggled");
+            });
+        });
+    </script>
 </head>
 <body>
-    <div id="wrapper">
-        <div id="sidebar-wrapper">
+    <div id="wrapper" class="d-flex">
+        <div id="sidebar-wrapper" class="bg-light border-right">
             <div class="sidebar-heading">Student Dashboard</div>
             <div class="list-group list-group-flush">
-                <a href="{{ url_for('student_dashboard') }}" class="list-group-item">Dashboard</a>
-                <a href="{{ url_for('student_profile') }}" class="list-group-item">Profile</a>
-                <a href="{{ url_for('student_courses') }}" class="list-group-item">My Courses</a>
-                <a href="{{ url_for('student_grades') }}" class="list-group-item">Grades</a>
-                <a href="{{ url_for('logout') }}" class="list-group-item">Logout</a>
+                <a href="#perfil" class="list-group-item list-group-item-action bg-light">
+                    <i class="fas fa-user"></i> Perfil
+                </a>
+                <a href="#aulas" class="list-group-item list-group-item-action bg-light">
+                    <i class="fas fa-book"></i> Aulas
+                </a>
+                <a href="#notas" class="list-group-item list-group-item-action bg-light">
+                    <i class="fas fa-graduation-cap"></i> Notas
+                </a>
             </div>
+            <a href="{{ url_for('logout') }}" class="list-group-item list-group-item-action bg-light sidebar-logout">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
         </div>
         <div id="page-content-wrapper">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                <button class="btn btn-primary" id="menu-toggle"><i class="fas fa-bars"></i> Toggle Menu</button>
+            </nav>
             <div class="container-fluid">
-                <h1 class="mt-4">Welcome, {{ student_name }}</h1>
-                <p>Here’s an overview of your courses and upcoming assignments.</p>
-                <!-- Student-specific content can go here -->
-                <section class="assignments">
-                    <h2>Upcoming Assignments</h2>
-                    <ul>
-                        <li><a href="#assignment-1">Assignment 1</a></li>
-                        <li><a href="#assignment-2">Assignment 2</a></li>
-                        <!-- List of assignments dynamically generated -->
-                    </ul>
-                </section>
-                <section class="assignment-details">
-                    <!-- Assignment Detail Example -->
-                    <article id="assignment-1">
-                        <h2>Details for Assignment 1</h2>
-                        <p>More details coming soon...</p>
-                    </article>
-                    <article id="assignment-2">
-                        <h2>Details for Assignment 2</h2>
-                        <p>More details coming soon...</p>
-                    </article>
-                </section>
+                <h1 class="mt-4">Student Dashboard</h1>
+                <p>Welcome, {{ student_name }}</p>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Aulas
+                    </div>
+                    <div class="card-body">
+                        <!-- Conteúdo de Aulas -->
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Notas
+                    </div>
+                    <div class="card-body">
+                        <!-- Conteúdo de Notas -->
+                    </div>
+                </div>
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Perfil
+                    </div>
+                    <div class="card-body">
+                        <!-- Conteúdo de Perfil -->
+                    </div>
+                </div>
             </div>
         </div>
     </div>

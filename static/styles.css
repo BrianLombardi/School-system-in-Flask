@@ -1,14 +1,14 @@
 /* Estilização geral */
 body {
-    background-color: #1a1a1a; /* Cor de fundo mais escura */
-    color: #ffffff; /* Cor do texto em branco */
-    font-family: Arial, sans-serif; /* Fonte padrão */
+    background-color: #1d1d1d; /* Cor de fundo escura */
+    color: #ffffff; /* Cor do texto clara */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte do admin */
 }
 
 .container {
-    max-width: 1200px; /* Largura máxima do container */
-    margin: auto; /* Centraliza o container */
-    padding: 15px; /* Espaçamento interno */
+    max-width: 1200px;
+    margin: auto;
+    padding: 15px;
 }
 
 /* Sidebar */
@@ -19,51 +19,73 @@ body {
 }
 
 #sidebar-wrapper {
-    min-height: 100vh; /* Altura mínima da sidebar */
-    width: 250px; /* Largura da sidebar */
-    background-color: #2a2a2a; /* Cor de fundo da sidebar */
+    min-height: 100vh;
+    width: 250px;
+    background-color: #1b1b1b; /* Cor de fundo da sidebar do admin */
+    transition: margin 0.25s ease-out;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Para manter o botão de logout na parte inferior */
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    margin-left: -250px;
 }
 
 .sidebar-heading {
-    font-size: 1.5rem; /* Tamanho do título da sidebar */
-    color: #ffffff; /* Cor do título da sidebar */
-    text-align: center; /* Centraliza o texto */
+    font-size: 1.5rem;
+    color: #ffffff; /* Cor do texto da sidebar */
+    text-align: center;
+    padding: 1rem;
+    margin-bottom: 20px; /* Espaço abaixo do cabeçalho */
 }
 
 /* Efeito hover para os itens da sidebar */
 .list-group-item {
-    border: none; /* Remove borda */
+    border: none;
+    color: #ffffff; /* Cor do texto dos itens da sidebar */
+    background-color: #1b1b1b; /* Cor de fundo dos itens da sidebar */
+    padding: 15px 20px; /* Espaçamento interno dos itens */
+}
+
+.list-group-item i {
+    margin-right: 10px; /* Espaço entre o ícone e o texto */
 }
 
 .list-group-item:hover {
-    background-color: #0056b3; /* Efeito de hover */
-    color: #ffffff; /* Cor do texto em hover */
+    background-color: #373737; /* Cor de fundo ao passar o mouse */
+    color: #ffffff; /* Cor do texto ao passar o mouse */
 }
 
+/* Estilo específico para o botão de logout */
+.sidebar-logout {
+    margin-top: auto; /* Alinha ao final da sidebar */
+}
 /* Formulários */
 form {
-    background-color: #2a2a2a; /* Fundo do formulário */
-    padding: 20px; /* Espaçamento interno */
-    border-radius: 5px; /* Bordas arredondadas */
+    background-color: #2d2d2d; /* Cor de fundo dos formulários */
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
 }
 
 .form-group {
-    margin-bottom: 1.5rem; /* Margem inferior para os grupos de formulário */
+    margin-bottom: 1.5rem;
 }
 
 label {
-    color: #ffffff; /* Cor dos rótulos */
+    color: #ffffff; /* Cor do texto */
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
 textarea {
-    width: 100%; /* Largura total */
-    padding: 10px; /* Espaçamento interno */
-    border: 1px solid #007bff; /* Borda do campo */
-    border-radius: 5px; /* Bordas arredondadas */
-    background-color: #1a1a1a; /* Fundo dos campos */
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background-color: #1d1d1d;
     color: #ffffff; /* Cor do texto */
 }
 
@@ -71,147 +93,103 @@ input[type="text"]:focus,
 input[type="email"]:focus,
 input[type="password"]:focus,
 textarea:focus {
-    border-color: #0056b3; /* Borda ao focar */
-    outline: none; /* Remove o contorno padrão */
+    border-color: #80bdff;
+    outline: none;
 }
 
 /* Mensagens de feedback */
 .alert {
-    margin-top: 20px; /* Espaço acima das mensagens */
-    padding: 15px; /* Espaçamento interno */
-    border-radius: 5px; /* Bordas arredondadas */
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 5px;
 }
 
 .alert-success {
-    background-color: #4CAF50; /* Cor de fundo para sucesso */
-    color: white; /* Cor do texto */
+    background-color: #28a745;
+    color: white;
 }
 
 .alert-danger {
-    background-color: #f44336; /* Cor de fundo para erro */
-    color: white; /* Cor do texto */
+    background-color: #dc3545;
+    color: white;
 }
 
 /* Tabelas */
 table {
-    width: 100%; /* Largura total */
-    border-collapse: collapse; /* Remove espaços entre células */
-    margin-top: 20px; /* Espaço acima da tabela */
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #2d2d2d; /* Cor de fundo das tabelas */
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
 }
 
 th, td {
-    padding: 12px; /* Espaçamento interno nas células */
-    text-align: left; /* Alinhamento à esquerda */
-    border-bottom: 1px solid #007bff; /* Borda inferior */
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #3a3a3a; /* Cor da borda */
 }
 
 th {
-    background-color: #0056b3; /* Cor do cabeçalho da tabela */
+    background-color: #1b1b1b; /* Cor de fundo do cabeçalho */
     color: #ffffff; /* Cor do texto do cabeçalho */
 }
-
 /* Footer */
 footer {
-    margin-top: 20px; /* Espaço acima do footer */
-    padding: 10px; /* Espaçamento interno */
-    background-color: #2a2a2a; /* Cor de fundo do footer */
-    text-align: center; /* Centraliza o texto */
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #1b1b1b; /* Cor de fundo do footer */
+    text-align: center;
     color: #ffffff; /* Cor do texto */
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
+    #sidebar-wrapper {
+        margin-left: -250px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        margin-left: 0;
+    }
+
     .sidebar-heading {
-        font-size: 1rem; /* Reduz o tamanho da fonte em telas menores */
+        font-size: 1rem;
     }
 
     h1 {
-        font-size: 2rem; /* Reduz o tamanho do título em telas menores */
+        font-size: 2rem;
     }
 }
 
 /* Estilização do cabeçalho */
 #page-content-wrapper {
-    flex-grow: 1; /* Permite que o conteúdo ocupe o espaço restante */
-    padding: 20px; /* Espaçamento interno */
+    flex-grow: 1;
+    padding: 20px;
 }
 
 /* Estilização do botão toggle */
 #menu-toggle {
-    margin-left: auto; /* Alinha o botão à direita */
+    margin-left: auto;
 }
 
-/* Estilização do dashboard do estudante */
-.dashboard-container {
-    max-width: 1200px;
-    margin: auto;
-    padding: 20px;
-    background-color: #2a2a2a; /* Fundo do dashboard */
+/* Cartões */
+.card {
+    background-color: #2d2d2d; /* Cor de fundo dos cartões */
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+    border: none;
     border-radius: 5px;
-}
-
-.dashboard-container header {
-    border-bottom: 1px solid #007bff; /* Borda inferior do cabeçalho */
-    padding-bottom: 10px;
     margin-bottom: 20px;
 }
 
-.dashboard-container nav ul {
-    list-style-type: none;
-    padding: 0;
+.card-header {
+    background-color: #1b1b1b; /* Cor de fundo do cabeçalho do cartão */
+    color: #ffffff; /* Cor do texto do cabeçalho do cartão */
+    border-bottom: none;
+    border-radius: 5px 5px 0 0;
+    padding: 15px;
 }
 
-.dashboard-container nav ul li {
-    display: inline;
-    margin-right: 10px;
-}
-
-.dashboard-container nav ul li a {
-    color: #007bff; /* Cor dos links */
-    text-decoration: none;
-}
-
-.dashboard-container nav ul li a:hover {
-    text-decoration: underline;
-}
-
-.dashboard-container main {
-    display: flex;
-    justify-content: space-between;
-}
-
-.dashboard-container main section {
-    width: 48%;
-}
-
-.dashboard-container .assignments ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.dashboard-container .assignments ul li {
-    background-color: #1a1a1a;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-}
-
-.dashboard-container .assignments ul li a {
-    color: #007bff;
-    text-decoration: none;
-}
-
-.dashboard-container .assignments ul li a:hover {
-    text-decoration: underline;
-}
-
-.dashboard-container .assignment-details article {
-    background-color: #1a1a1a;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-}
-
-.dashboard-container footer {
-    margin-top: 20px;
+.card-body {
+    padding: 20px;
+    color: #ffffff; /* Cor do texto do corpo do cartão */
 }

@@ -8,7 +8,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'sua_chave_secreta'
 db = SQLAlchemy(app)
 
-# Modelo de Usuário
+# Modelos
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(100), nullable=False)
@@ -17,37 +17,49 @@ class User(db.Model):
     is_admin = db.Column(db.Boolean, default=False)
     turmas = db.relationship('Turma', secondary='user_turma', backref='usuarios')
     materias = db.relationship('Materia', secondary='user_materia', backref='professores')
+    cargos = db.relationship('Cargo', secondary='user_cargo', backref='usuarios')
 
-# Modelo de Turma
 class Turma(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
 
-# Modelo de Cargo
 class Cargo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
 
-# Tabela de Associação entre Usuário e Turma
 class UserTurma(db.Model):
     __tablename__ = 'user_turma'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), primary_key=True)
 
-# Tabela de Associação entre Usuário e Matéria
 class UserMateria(db.Model):
     __tablename__ = 'user_materia'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     materia_id = db.Column(db.Integer, db.ForeignKey('materia.id'), primary_key=True)
 
-# Modelo de Matéria
+class UserCargo(db.Model):
+    __tablename__ = 'user_cargo'
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    cargo_id = db.Column(db.Integer, db.ForeignKey('cargo.id'), primary_key=True)
+
 class Materia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
     carga_horaria = db.Column(db.Integer, nullable=False)
+@app.route('/assignment_detail/<int:assignment_id>')
+def assignment_detail(assignment_id):
+    if 'user_id' in session and not session.get('is_admin'):
+        assignment = Assignment.query.get(assignment_id)
+        if not assignment:
+            flash('Assignment not found.', 'danger')
+            return redirect(url_for('student_dashboard'))
+        return render_template('assignment_detail.html', assignment_id=assignment_id)
+    else:
+        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
+        return redirect(url_for('login'))
 
 # Função para criar o banco de dados e o administrador
 def create_db():
@@ -112,7 +124,6 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html')
-
 @app.route('/admin')
 def admin_dashboard():
     if 'user_id' in session and session.get('is_admin'):
@@ -140,7 +151,6 @@ def student_dashboard():
     else:
         flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
         return redirect(url_for('login'))
-
 @app.route('/create_turma', methods=['POST'])
 def create_turma():
     if 'user_id' in session and session.get('is_admin'):
@@ -180,7 +190,6 @@ def create_materia():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/assign_professor_to_materia/<int:materia_id>', methods=['POST'])
 def assign_professor_to_materia(materia_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -236,6 +245,29 @@ def logout():
     session.clear()
     flash('Você saiu com sucesso.', 'success')
     return redirect(url_for('index'))
+@app.route('/student_profile')
+def student_profile():
+    if 'user_id' in session and not session.get('is_admin'):
+        return render_template('student_profile.html', student_name=session.get('fullname'))
+    else:
+        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
+        return redirect(url_for('login'))
+
+@app.route('/student_courses')
+def student_courses():
+    if 'user_id' in session and not session.get('is_admin'):
+        return render_template('student_courses.html', student_name=session.get('fullname'))
+    else:
+        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
+        return redirect(url_for('login'))
+
+@app.route('/student_grades')
+def student_grades():
+    if 'user_id' in session and not session.get('is_admin'):
+        return render_template('student_grades.html', student_name=session.get('fullname'))
+    else:
+        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
+        return redirect(url_for('login'))
 
 if __name__ == '__main__':
     with app.app_context():

@@ -140,3 +140,78 @@ footer {
 #menu-toggle {
     margin-left: auto; /* Alinha o botão à direita */
 }
+
+/* Estilização do dashboard do estudante */
+.dashboard-container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+    background-color: #2a2a2a; /* Fundo do dashboard */
+    border-radius: 5px;
+}
+
+.dashboard-container header {
+    border-bottom: 1px solid #007bff; /* Borda inferior do cabeçalho */
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.dashboard-container nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dashboard-container nav ul li {
+    display: inline;
+    margin-right: 10px;
+}
+
+.dashboard-container nav ul li a {
+    color: #007bff; /* Cor dos links */
+    text-decoration: none;
+}
+
+.dashboard-container nav ul li a:hover {
+    text-decoration: underline;
+}
+
+.dashboard-container main {
+    display: flex;
+    justify-content: space-between;
+}
+
+.dashboard-container main section {
+    width: 48%;
+}
+
+.dashboard-container .assignments ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.dashboard-container .assignments ul li {
+    background-color: #1a1a1a;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.dashboard-container .assignments ul li a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.dashboard-container .assignments ul li a:hover {
+    text-decoration: underline;
+}
+
+.dashboard-container .assignment-details article {
+    background-color: #1a1a1a;
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+.dashboard-container footer {
+    margin-top: 20px;
+}

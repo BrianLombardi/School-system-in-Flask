@@ -7,33 +7,43 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <div class="dashboard-container">
-        <header>
-            <h1>Student Dashboard</h1>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('student_profile') }}">Profile</a></li>
-                    <li><a href="{{ url_for('student_courses') }}">My Courses</a></li>
-                    <li><a href="{{ url_for('student_grades') }}">Grades</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                </ul>
-            </nav>
-        </header>
-        <main>
-            <section class="overview">
-                <h2>Welcome, {{ student_name }}</h2>
+    <div id="wrapper">
+        <div id="sidebar-wrapper">
+            <div class="sidebar-heading">Student Dashboard</div>
+            <div class="list-group list-group-flush">
+                <a href="{{ url_for('student_dashboard') }}" class="list-group-item">Dashboard</a>
+                <a href="{{ url_for('student_profile') }}" class="list-group-item">Profile</a>
+                <a href="{{ url_for('student_courses') }}" class="list-group-item">My Courses</a>
+                <a href="{{ url_for('student_grades') }}" class="list-group-item">Grades</a>
+                <a href="{{ url_for('logout') }}" class="list-group-item">Logout</a>
+            </div>
+        </div>
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <h1 class="mt-4">Welcome, {{ student_name }}</h1>
                 <p>Here’s an overview of your courses and upcoming assignments.</p>
                 <!-- Student-specific content can go here -->
-            </section>
-            <section class="assignments">
-                <h2>Upcoming Assignments</h2>
-                <ul>
-                    <li><a href="{{ url_for('assignment_detail', assignment_id=1) }}">Assignment 1</a></li>
-                    <li><a href="{{ url_for('assignment_detail', assignment_id=2) }}">Assignment 2</a></li>
-                    <!-- List of assignments dynamically generated -->
-                </ul>
-            </section>
-        </main>
+                <section class="assignments">
+                    <h2>Upcoming Assignments</h2>
+                    <ul>
+                        <li><a href="#assignment-1">Assignment 1</a></li>
+                        <li><a href="#assignment-2">Assignment 2</a></li>
+                        <!-- List of assignments dynamically generated -->
+                    </ul>
+                </section>
+                <section class="assignment-details">
+                    <!-- Assignment Detail Example -->
+                    <article id="assignment-1">
+                        <h2>Details for Assignment 1</h2>
+                        <p>More details coming soon...</p>
+                    </article>
+                    <article id="assignment-2">
+                        <h2>Details for Assignment 2</h2>
+                        <p>More details coming soon...</p>
+                    </article>
+                </section>
+            </div>
+        </div>
     </div>
 </body>
 </html>

@@ -248,3 +248,42 @@ if __name__ == '__main__':
     with app.app_context():
         create_db()
     app.run(debug=True)
+# Definição do modelo de aluno
+class Aluno(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome_completo = db.Column(db.String(100))
+    email = db.Column(db.String(100), unique=True)
+    turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
+
+# Definição do modelo de turma
+class Turma(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100))
+    descricao = db.Column(db.String(255))
+    alunos = db.relationship('Aluno', backref='turma', lazy=True)
+
+@app.route('/')
+def index():
+    # Exibe uma lista de todas as turmas
+    turmas = Turma.query.all()
+    return render_template('index.html', turmas=turmas)
+
+@app.route('/turma/<int:turma_id>/alunos')
+def turma_alunos(turma_id):
+    # Recupera todos os alunos da turma especificada
+    turma = Turma.query.get_or_404(turma_id)
+    alunos = Aluno.query.filter_by(turma_id=turma.id).all()
+    
+    return render_template('turma_alunos.html', turma=turma, alunos=alunos)
+
+if __name__ == '__main__':
+    db.create_all()  # Cria as tabelas do banco de dados
+    app.run(debug=True)
+
+@app.route('/add_professor/<int:user_id>', methods=['POST'])
+def add_professor(user_id):
+    user = User.query.get(user_id)
+    if user:
+        user.cargo = 'Professor'
+        db.session.commit()
+    return redirect(url_for('admin_dashboard_users'))

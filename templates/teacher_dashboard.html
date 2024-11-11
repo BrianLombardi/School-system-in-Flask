@@ -5,35 +5,125 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Teacher Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        /* Estilos personalizados para o dashboard */
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #333;
+            padding-top: 60px;
+            transition: 0.3s;
+        }
+
+        .sidebar a {
+            padding: 15px;
+            font-size: 18px;
+            color: #ffffff;
+            display: block;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #575757;
+        }
+
+        .sidebar .logout {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            color: #ffffff;
+            text-align: center;
+            background-color: #444;
+            border-top: 1px solid #555;
+            transition: 0.3s;
+        }
+
+        .sidebar .logout:hover {
+            background-color: #575757;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: 0.3s;
+        }
+
+        .dashboard-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+
+            .main-content {
+                margin-left: 200px;
+            }
+
+            .toggle-sidebar {
+                top: 10px;
+                left: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <div class="dashboard-container">
-        <header>
-            <h1>Teacher Dashboard</h1>
-            <nav>
-                <ul>
-                    <li><a href="{{ url_for('teacher_profile') }}">Profile</a></li>
-                    <li><a href="{{ url_for('teacher_courses') }}">My Courses</a></li>
-                    <li><a href="{{ url_for('teacher_attendance') }}">Attendance</a></li>
-                    <li><a href="{{ url_for('logout') }}">Logout</a></li>
-                </ul>
-            </nav>
-        </header>
-        <main>
-            <section class="overview">
-                <h2>Overview</h2>
-                <p>Welcome back, {{ teacher_name }}! Here’s a summary of your teaching tasks for today.</p>
-                <!-- Teacher-specific content can go here -->
-            </section>
-            <section class="courses">
-                <h2>Current Courses</h2>
-                <ul>
-                    <li><a href="{{ url_for('course_detail', course_id=1) }}">Course 1</a></li>
-                    <li><a href="{{ url_for('course_detail', course_id=2) }}">Course 2</a></li>
-                    <!-- List of courses dynamically generated -->
-                </ul>
-            </section>
-        </main>
+    <button class="toggle-sidebar" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="sidebar" id="sidebar">
+        <a href="{{ url_for('teacher_classes') }}"><i class="fas fa-book"></i> Aulas</a>
+        <a href="{{ url_for('logout') }}" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="main-content">
+        <h2>Turmas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome da Turma</th>
+                    <th>Descrição</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for turma in turmas %}
+                <tr>
+                    <td>{{ turma.nome }}</td>
+                    <td>{{ turma.descricao }}</td>
+                    <td><a href="{{ url_for('turma_alunos', turma_id=turma.id) }}" class="btn btn-custom">Ver Alunos</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </body>
 </html>
+

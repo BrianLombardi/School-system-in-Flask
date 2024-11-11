@@ -347,6 +347,39 @@
         </div>
     </div>
 
+    <!-- Seção de Usuários - Professores -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">Usuários - Professores</h3>
+    </div>
+    <div class="card-body">
+        <table class="table table-bordered table-striped table-sm">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>Cargo</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for professor in professors %}
+                    <tr>
+                        <td>{{ professor.id }}</td>
+                        <td>{{ professor.name }}</td>
+                        <td>{{ professor.role }}</td>
+                        <td>
+                            <!-- Ações (exemplo de editar ou remover) -->
+                            <a href="{{ url_for('edit_user', user_id=professor.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                            <a href="{{ url_for('delete_user', user_id=professor.id) }}" class="btn btn-danger btn-sm">Excluir</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
     <script>
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('hidden');

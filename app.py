@@ -287,3 +287,10 @@ def add_professor(user_id):
         user.cargo = 'Professor'
         db.session.commit()
     return redirect(url_for('admin_dashboard_users'))
+
+@app.route('/admin_dashboard')
+def admin_dashboard():
+    # Consulta para pegar os usuários com o cargo de 'professor'
+    professors = User.query.filter_by(role='professor').all()  # Ou o campo correto para o cargo
+
+    return render_template('admin_dashboard.html', professors=professors)

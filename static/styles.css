@@ -3,21 +3,26 @@ body {
     background-color: #1d1d1d; /* Cor de fundo escura */
     color: #ffffff; /* Cor do texto clara */
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte do admin */
+    margin: 0;
+    padding: 0;
 }
 
+/* Container geral */
 .container {
     max-width: 1200px;
     margin: auto;
     padding: 15px;
 }
 
-/* Sidebar */
+/* Wrapper */
 #wrapper {
     display: flex;
-    width: 100%;
+    min-height: 100vh;
+    flex-direction: row; /* Definindo a direção do layout */
     transition: all 0.5s ease;
 }
 
+/* Sidebar */
 #sidebar-wrapper {
     min-height: 100vh;
     width: 250px;
@@ -61,6 +66,7 @@ body {
 .sidebar-logout {
     margin-top: auto; /* Alinha ao final da sidebar */
 }
+
 /* Formulários */
 form {
     background-color: #2d2d2d; /* Cor de fundo dos formulários */
@@ -124,7 +130,7 @@ table {
 }
 
 th, td {
-    padding: 12px;
+    padding: 15px;
     text-align: left;
     border-bottom: 1px solid #3a3a3a; /* Cor da borda */
 }
@@ -133,6 +139,22 @@ th {
     background-color: #1b1b1b; /* Cor de fundo do cabeçalho */
     color: #ffffff; /* Cor do texto do cabeçalho */
 }
+
+td {
+    background-color: #333333; /* Cor de fundo das células */
+    color: #ffffff; /* Cor do texto das células */
+}
+
+/* Estilo para as linhas alternadas da tabela */
+tr:nth-child(even) td {
+    background-color: #444444; /* Linha alternada */
+}
+
+/* Estilo de hover para as células */
+tr:hover td {
+    background-color: #575757; /* Cor de fundo ao passar o mouse */
+}
+
 /* Footer */
 footer {
     margin-top: 20px;
@@ -159,12 +181,30 @@ footer {
     h1 {
         font-size: 2rem;
     }
+
+    /* Ajuste na largura da tabela para a tela pequena */
+    table {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    /* Ajuste do layout para telas pequenas */
+    #wrapper {
+        flex-direction: column; /* Sidebar vai ficar acima do conteúdo */
+    }
+
+    #page-content-wrapper {
+        margin-left: 0; /* Remover o margin-left na tela pequena */
+        padding: 15px;
+    }
 }
 
 /* Estilização do cabeçalho */
 #page-content-wrapper {
     flex-grow: 1;
     padding: 20px;
+    margin-left: 250px; /* Garantir que o conteúdo não sobreponha a sidebar */
+    background-color: #2d2d2d; /* Cor de fundo do conteúdo */
 }
 
 /* Estilização do botão toggle */

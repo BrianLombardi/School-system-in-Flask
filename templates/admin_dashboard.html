@@ -234,192 +234,219 @@
     <div class="main-content" id="main-content">
         <div class="dashboard-header">Painel Administrativo</div>
 
-        <!-- Aba de Usuários -->
-        <div class="tab-content" id="usuarios-tab" class="hidden">
-            <h4>Usuários</h4>
+ <!-- Aba de Usuários -->
+<div class="tab-content" id="usuarios-tab">
+    <h4>Usuários</h4>
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Pesquisar por nome ou email" onkeyup="searchUsers()">
+    </div>
+    <table class="table-users tabela-principal">
+        <thead>
+            <tr>
+                <th colspan="4" class="table-title">Tabela Principal</th>
+            </tr>
+            <tr>
+                <th>ID</th>
+                <th>Nome Completo</th>
+                <th>Email</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="usuarios-tbody">
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.fullname }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Tabela de Usuários - Professores -->
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Usuários - Professores</h3>
+        </div>
+        <div class="card-body">
+            <!-- Barra de Pesquisa -->
             <div class="search-bar">
-                <input type="text" id="search" placeholder="Pesquisar por nome ou email" onkeyup="searchUsers()">
-                <button onclick="searchUsers()">Pesquisar</button>
+                <input type="text" id="search" placeholder="Pesquisar por nome ou cargo" onkeyup="searchUsers()">
             </div>
-            <table id="usuarios-table">
+            
+            <table id="tabela-principal" class="table table-bordered table-striped table-sm">
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Nome Completo</th>
-                        <th>Email</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user in users %}
-                    <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.fullname }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>
-                            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST">
-                                <button type="submit" class="btn btn-danger">Deletar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Aba de Turmas -->
-        <div class="tab-content" id="turmas-tab" class="hidden">
-            <h4>Turmas</h4>
-            <form action="{{ url_for('create_turma') }}" method="POST">
-                <div class="form-group">
-                    <label for="nome">Nome da Turma</label>
-                    <input type="text" id="nome" name="nome" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="descricao">Descrição</label>
-                    <input type="text" id="descricao" name="descricao" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-custom">Criar Turma</button>
-            </form>
-
-            <hr>
-
-            <h5>Lista de Turmas</h5>
-            <table>
-                <thead>
-                    <tr>
                         <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for turma in turmas %}
-                    <tr>
-                        <td>{{ turma.nome }}</td>
-                        <td>{{ turma.descricao }}</td>
-                        <td>
-                            <form action="/delete_turma/{{ turma.id }}" method="POST">
-                                <button type="submit" class="btn btn-danger">Deletar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-
-        <!-- Aba de Matérias -->
-        <div class="tab-content" id="materias-tab" class="hidden">
-            <h4>Matérias</h4>
-            <form action="{{ url_for('create_materia') }}" method="POST">
-                <div class="form-group">
-                    <label for="nome">Nome da Matéria</label>
-                    <input type="text" id="nome" name="nome" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-custom">Adicionar Matéria</button>
-            </form>
-        </div>
-
-        <!-- Aba de Cargos -->
-        <div class="tab-content" id="cargos-tab" class="hidden">
-            <h4>Cargos</h4>
-            <table>
-                <thead>
-                    <tr>
                         <th>Cargo</th>
-                        <th>Ação</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
-                    {% for cargo in cargos %}
-                    <tr>
-                        <td>{{ cargo.nome }}</td>
-                        <td>
-                            <form action="/delete_cargo/{{ cargo.id }}" method="POST">
-                                <button type="submit" class="btn btn-danger">Deletar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- Seção de Usuários - Professores -->
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Usuários - Professores</h3>
-    </div>
-    <div class="card-body">
-        <table class="table table-bordered table-striped table-sm">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nome</th>
-                    <th>Cargo</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for professor in professors %}
+                <tbody id="usuarios-tbody">
+                    {% for professor in professors %}
                     <tr>
                         <td>{{ professor.id }}</td>
                         <td>{{ professor.name }}</td>
                         <td>{{ professor.role }}</td>
                         <td>
-                            <!-- Ações (exemplo de editar ou remover) -->
                             <a href="{{ url_for('edit_user', user_id=professor.id) }}" class="btn btn-warning btn-sm">Editar</a>
                             <a href="{{ url_for('delete_user', user_id=professor.id) }}" class="btn btn-danger btn-sm">Excluir</a>
                         </td>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('hidden');
-            document.getElementById('main-content').classList.toggle('expanded');
-        }
+<!-- Remova a tabela de "Usuários - Professores" das outras abas -->
 
-        function showTab(tabId) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.add('hidden'));
-            const activeTab = document.getElementById(tabId + '-tab');
-            activeTab.classList.remove('hidden');
 
-            // Atualizar link ativo
-            const links = document.querySelectorAll('.sidebar a');
-            links.forEach(link => link.classList.remove('active'));
-            document.getElementById(tabId + '-link').classList.add('active');
-        }
+<!-- Função de busca -->
+<script>
+    function searchUsers() {
+        const query = document.getElementById("search").value.toLowerCase(); // Obtém o texto da busca
+        const rows = document.querySelectorAll("#usuarios-tbody tr"); // Seleciona as linhas do tbody da tabela
 
-        function searchUsers() {
-            let input = document.getElementById('search').value.toLowerCase();
-            let table = document.getElementById('usuarios-table');
-            let rows = table.getElementsByTagName('tr');
+        rows.forEach(row => {
+            const name = row.cells[1].textContent.toLowerCase(); // Nome completo
+            const email = row.cells[2].textContent.toLowerCase(); // Email
 
-            for (let i = 1; i < rows.length; i++) {
-                let td = rows[i].getElementsByTagName('td');
-                if (td) {
-                    let name = td[1].textContent || td[1].innerText;
-                    let email = td[2].textContent || td[2].innerText;
-                    if (name.toLowerCase().indexOf(input) > -1 || email.toLowerCase().indexOf(input) > -1) {
-                        rows[i].style.display = '';
-                    } else {
-                        rows[i].style.display = 'none';
-                    }
+            // Se o nome ou email contiverem a consulta, mostramos a linha, senão ocultamos
+            if (name.includes(query) || email.includes(query)) {
+                row.style.display = ""; // Exibe a linha
+            } else {
+                row.style.display = "none"; // Oculta a linha
+            }
+        });
+    }
+</script>
+<!-- Aba de Turmas -->
+<div class="tab-content" id="turmas-tab" class="hidden">
+    <h4>Turmas</h4>
+    <form action="{{ url_for('create_turma') }}" method="POST">
+        <div class="form-group">
+            <label for="nome">Nome da Turma</label>
+            <input type="text" id="nome" name="nome" class="form-control" required>
+        </div>
+        <div class="form-group">
+            <label for="descricao">Descrição</label>
+            <input type="text" id="descricao" name="descricao" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom">Criar Turma</button>
+    </form>
+
+    <hr>
+
+    <h5>Lista de Turmas</h5>
+    <table>
+        <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Descrição</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for turma in turmas %}
+            <tr>
+                <td>{{ turma.nome }}</td>
+                <td>{{ turma.descricao }}</td>
+                <td>
+                    <form action="/delete_turma/{{ turma.id }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Aba de Matérias -->
+<div class="tab-content" id="materias-tab" class="hidden">
+    <h4>Matérias</h4>
+    <form action="{{ url_for('create_materia') }}" method="POST">
+        <div class="form-group">
+            <label for="nome">Nome da Matéria</label>
+            <input type="text" id="nome" name="nome" class="form-control" required>
+        </div>
+        <button type="submit" class="btn btn-custom">Adicionar Matéria</button>
+    </form>
+</div>
+
+<!-- Aba de Cargos -->
+<div class="tab-content" id="cargos-tab" class="hidden">
+    <h4>Cargos</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Cargo</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cargo in cargos %}
+            <tr>
+                <td>{{ cargo.nome }}</td>
+                <td>
+                    <form action="/delete_cargo/{{ cargo.id }}" method="POST">
+                        <button type="submit" class="btn btn-danger">Deletar</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('hidden');
+        document.getElementById('main-content').classList.toggle('expanded');
+    }
+
+    function showTab(tabId) {
+        const tabs = document.querySelectorAll('.tab-content');
+        tabs.forEach(tab => tab.classList.add('hidden'));
+        const activeTab = document.getElementById(tabId + '-tab');
+        activeTab.classList.remove('hidden');
+
+        // Atualizar link ativo
+        const links = document.querySelectorAll('.sidebar a');
+        links.forEach(link => link.classList.remove('active'));
+        document.getElementById(tabId + '-link').classList.add('active');
+    }
+
+    function searchUsers() {
+        let input = document.getElementById('search').value.toLowerCase();
+        let table = document.getElementById('tabela-principal');
+        let rows = table.getElementsByTagName('tr');
+
+        for (let i = 1; i < rows.length; i++) {
+            let td = rows[i].getElementsByTagName('td');
+            if (td) {
+                let name = td[1].textContent || td[1].innerText;
+                let role = td[2].textContent || td[2].innerText;
+                if (name.toLowerCase().indexOf(input) > -1 || role.toLowerCase().indexOf(input) > -1) {
+                    rows[i].style.display = '';
+                } else {
+                    rows[i].style.display = 'none';
                 }
             }
         }
+    }
 
-        // Mostrar tab inicial
-        showTab('usuarios');
-    </script>
+    // Mostrar tab inicial
+    showTab('usuarios');
+</script>
+
 </body>
-
 </html>

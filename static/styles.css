@@ -155,6 +155,78 @@ tr:hover td {
     background-color: #575757; /* Cor de fundo ao passar o mouse */
 }
 
+/* Estilização da tabela de "Usuários - Professor" */
+.table-users {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #2d2d2d; /* Cor de fundo da tabela */
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+
+.table-users th,
+.table-users td {
+    padding: 15px;
+    text-align: left;
+    border-bottom: 1px solid #3a3a3a; /* Borda fina para separar as células */
+}
+
+.table-users th {
+    background-color: #1b1b1b; /* Cor de fundo do cabeçalho */
+    color: #ffffff; /* Cor do texto do cabeçalho */
+}
+
+.table-users td {
+    background-color: #333333; /* Cor de fundo das células */
+    color: #ffffff; /* Cor do texto das células */
+}
+
+/* Alternar a cor das linhas para melhor legibilidade */
+.table-users tr:nth-child(even) td {
+    background-color: #444444; /* Linha alternada */
+}
+
+.table-users tr:hover td {
+    background-color: #575757; /* Cor de fundo ao passar o mouse */
+}
+
+/* Estilização das ações (editar, excluir) na tabela */
+.table-users .btn {
+    background-color: #007bff; /* Cor do botão (azul) */
+    color: #ffffff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 0.875rem;
+    text-decoration: none;
+}
+
+.table-users .btn:hover {
+    background-color: #0056b3; /* Cor de fundo ao passar o mouse */
+}
+
+/* Ícones dos botões de ação (editar, excluir) */
+.table-users .btn-edit {
+    background-color: #28a745; /* Cor verde para o botão de editar */
+}
+
+.table-users .btn-delete {
+    background-color: #dc3545; /* Cor vermelha para o botão de excluir */
+}
+
+.table-users .btn-edit:hover {
+    background-color: #218838; /* Cor verde mais escura ao passar o mouse */
+}
+
+.table-users .btn-delete:hover {
+    background-color: #c82333; /* Cor vermelha mais escura ao passar o mouse */
+}
+
+/* Ajuste da largura das colunas, se necessário */
+.table-users th, .table-users td {
+    width: auto;
+}
+
 /* Footer */
 footer {
     margin-top: 20px;
@@ -230,6 +302,60 @@ footer {
 }
 
 .card-body {
-    padding: 20px;
+    padding: 15px;
+    background-color: #333333; /* Cor de fundo do corpo do cartão */
     color: #ffffff; /* Cor do texto do corpo do cartão */
 }
+
+/* Adicionando um espaçamento entre as tabelas */
+#usuarios-tab .card {
+    margin-bottom: 20px; /* Altere o valor conforme necessário */
+}
+
+#usuarios-tab table {
+    margin-bottom: 20px; /* Altere o valor conforme necessário */
+}
+
+.tabela-principal {
+    border: 2px solid #ffffff; /* Apenas como exemplo */
+    margin-bottom: 20px;
+}
+
+.table-users .table-title {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #1b1b1b;
+    text-align: center;
+    padding: 15px;
+}
+
+.search-bar {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.search-bar input[type="text"] {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    background-color: #1d1d1d;
+    color: #ffffff;
+    width: 200px;
+}
+
+.search-bar button {
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: #ffffff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.search-bar button:hover {
+    background-color: #0056b3;
+}
+

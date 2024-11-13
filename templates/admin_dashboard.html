@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -217,7 +216,6 @@
         }
     </style>
 </head>
-
 <body>
     <button class="toggle-sidebar" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
@@ -232,7 +230,6 @@
 
     <div class="main-content" id="main-content">
         <div class="dashboard-header">Painel Administrativo</div>
-
         <!-- Aba de Usuários -->
         <div class="tab-content" id="usuarios-tab">
             <h4>Usuários</h4>
@@ -312,8 +309,12 @@
                                         <td>{{ user.fullname }}</td>
                                         <td>{{ cargos | join(', ') }}</td>
                                         <td>
-                                            <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-warning btn-sm">Editar</a>
-                                            <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger btn-sm">Excluir</a>
+                                            <form action="{{ url_for('remove_professor', user_id=user.id) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-warning btn-sm">Retirar Cargo de Professor</button>
+                                            </form>
+                                            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
+                                            </form>
                                         </td>
                                     </tr>
                                 {% endif %}
@@ -323,6 +324,7 @@
                 </div>
             </div>
         </div>
+        
         <!-- Aba de Turmas -->
         <div class="tab-content hidden" id="turmas-tab">
             <h4>Turmas</h4>
@@ -343,6 +345,7 @@
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Descrição</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -351,11 +354,17 @@
                         <td>{{ turma.id }}</td>
                         <td>{{ turma.nome }}</td>
                         <td>{{ turma.descricao }}</td>
+                        <td>
+                            <form action="{{ url_for('delete_turma', turma_id=turma.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
 
         <!-- Aba de Matérias -->
         <div class="tab-content hidden" id="materias-tab">
@@ -495,5 +504,4 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

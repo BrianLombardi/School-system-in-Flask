@@ -152,7 +152,6 @@ tr:nth-child(even) td {
 tr:hover td {
     background-color: #575757;
 }
-
 /* Estilização da tabela de "Usuários - Professor" */
 .table-users {
     width: 100%;
@@ -196,6 +195,7 @@ tr:hover td {
     font-size: 0.875rem;
     text-decoration: none;
 }
+
 .table-users .btn:hover {
     background-color: #0056b3;
 }

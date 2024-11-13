@@ -22,7 +22,7 @@ class User(db.Model):
 class Turma(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    descricao = db.Column(db.String(255), nullable=False)
+    descricao = db.Column(db.String(200), nullable=False)
 
 class Cargo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,8 +49,7 @@ class Materia(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
     carga_horaria = db.Column(db.Integer, nullable=False)
-
-# Rotas e funcionalidades
+    # Rotas e funcionalidades
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -105,7 +104,7 @@ def register():
 
     return render_template('register.html')
 
-@app.route('/admin')
+@app.route('/admin_dashboard')
 def admin_dashboard():
     if 'user_id' in session and session.get('is_admin'):
         turmas = Turma.query.all()
@@ -117,7 +116,6 @@ def admin_dashboard():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
         return redirect(url_for('login'))
-
 @app.route('/assignment_detail/<int:assignment_id>')
 def assignment_detail(assignment_id):
     if 'user_id' in session and not session.get('is_admin'):
@@ -168,7 +166,6 @@ def edit_user(user_id):
         return redirect(url_for('admin_dashboard'))
     return render_template('edit_user.html', user=user)
 
-
 @app.route('/create_materia', methods=['POST'])
 def create_materia():
     if 'user_id' in session and session.get('is_admin'):
@@ -181,6 +178,76 @@ def create_materia():
         flash('Matéria criada com sucesso!', 'success')
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+@app.route('/delete_turma/<int:turma_id>', methods=['POST'])
+def delete_turma(turma_id):
+    if 'user_id' in session and session.get('is_admin'):
+        turma = Turma.query.get_or_404(turma_id)
+        db.session.delete(turma)
+        db.session.commit()
+        flash('Turma deletada com sucesso!', 'success')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/delete_materia/<int:materia_id>', methods=['POST'])
+def delete_materia(materia_id):
+    if 'user_id' in session and session.get('is_admin'):
+        materia = Materia.query.get_or_404(materia_id)
+        db.session.delete(materia)
+        db.session.commit()
+        flash('Matéria deletada com sucesso!', 'success')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/delete_cargo/<int:cargo_id>', methods=['POST'])
+def delete_cargo(cargo_id):
+    if 'user_id' in session and session.get('is_admin'):
+        cargo = Cargo.query.get_or_404(cargo_id)
+        db.session.delete(cargo)
+        db.session.commit()
+        flash('Cargo deletado com sucesso!', 'success')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/add_professor/<int:user_id>', methods=['POST'])
+def add_professor(user_id):
+    if 'user_id' in session and session.get('is_admin'):
+        user = db.session.get(User, user_id)
+        if user:
+            professor_cargo = Cargo.query.filter_by(nome='Professor').first()
+            if not professor_cargo:
+                professor_cargo = Cargo(nome='Professor', descricao='Professor na escola')
+                db.session.add(professor_cargo)
+                db.session.commit()
+            if professor_cargo not in user.cargos:
+                user.cargos.append(professor_cargo)
+                db.session.commit()
+                flash('Usuário transformado em professor com sucesso!', 'success')
+            else:
+                flash('Usuário já é um professor!', 'info')
+        else:
+            flash('Usuário não encontrado!', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/remove_professor/<int:user_id>', methods=['POST'])
+def remove_professor(user_id):
+    user = User.query.get_or_404(user_id)
+    professor_cargo = Cargo.query.filter_by(nome='Professor').first()
+    if professor_cargo in user.cargos:
+        user.cargos.remove(professor_cargo)
+        if not user.cargos:
+            aluno_cargo = Cargo.query.filter_by(nome='Aluno').first()
+            if not aluno_cargo:
+                aluno_cargo = Cargo(nome='Aluno', descricao='Usuário sem cargos específicos')
+                db.session.add(aluno_cargo)
+            user.cargos.append(aluno_cargo)
+        db.session.commit()
+        flash(f'Cargo de professor removido de {user.fullname}.', 'success')
     return redirect(url_for('admin_dashboard'))
 
 @app.route('/assign_professor_to_materia/<int:materia_id>', methods=['POST'])
@@ -199,7 +266,6 @@ def assign_professor_to_materia(materia_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/add_user_to_turma/<int:turma_id>', methods=['POST'])
 def add_user_to_turma(turma_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -238,38 +304,6 @@ def logout():
     session.clear()
     flash('Você saiu com sucesso.', 'success')
     return redirect(url_for('index'))
-
-@app.route('/add_professor/<int:user_id>', methods=['POST'])
-def add_professor(user_id):
-    if 'user_id' in session and session.get('is_admin'):
-        user = db.session.get(User, user_id)
-        if user:
-            print(f"Usuário encontrado: {user.fullname}")
-            professor_cargo = Cargo.query.filter_by(nome='Professor').first()
-            if not professor_cargo:
-                print("Cargo 'Professor' não encontrado, criando novo cargo.")
-                professor_cargo = Cargo(nome='Professor', descricao='Professor na escola')
-                db.session.add(professor_cargo)
-                db.session.commit()
-            if professor_cargo not in user.cargos:
-                print(f"Adicionando cargo 'Professor' ao usuário {user.fullname}.")
-                user.cargos.append(professor_cargo)
-                db.session.commit()
-                print(f"Usuário {user.fullname} agora é um professor.")
-                flash('Usuário transformado em professor com sucesso!', 'success')
-            else:
-                print(f"Usuário {user.fullname} já é um professor.")
-                flash('Usuário já é um professor!', 'info')
-        else:
-            print("Usuário não encontrado!")
-            flash('Usuário não encontrado!', 'danger')
-    else:
-        print("Acesso negado. Faça login como administrador.")
-        flash('Acesso negado. Faça login como administrador.', 'danger')
-    return redirect(url_for('admin_dashboard'))
-
-
-
 def create_db():
     db.create_all()
     if not User.query.filter_by(email='admin@exemplo.com').first():
@@ -308,8 +342,3 @@ def turma_alunos(turma_id):
     turma = Turma.query.get_or_404(turma_id)
     alunos = Aluno.query.filter_by(turma_id=turma.id).all()
     return render_template('turma_alunos.html', turma=turma, alunos=alunos)
-
-@app.route('/admin_dashboard')
-def admin_dashboard():
-    professors = User.query.filter_by(role='professor').all()
-    return render_template('admin_dashboard.html', professors=professors)

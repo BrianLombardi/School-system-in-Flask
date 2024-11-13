@@ -1,8 +1,8 @@
 /* Estilização geral */
 body {
-    background-color: #1d1d1d; /* Cor de fundo escura */
-    color: #ffffff; /* Cor do texto clara */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Fonte do admin */
+    background-color: #1d1d1d;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
 }
@@ -18,7 +18,7 @@ body {
 #wrapper {
     display: flex;
     min-height: 100vh;
-    flex-direction: row; /* Definindo a direção do layout */
+    flex-direction: row;
     transition: all 0.5s ease;
 }
 
@@ -26,11 +26,11 @@ body {
 #sidebar-wrapper {
     min-height: 100vh;
     width: 250px;
-    background-color: #1b1b1b; /* Cor de fundo da sidebar do admin */
+    background-color: #1b1b1b;
     transition: margin 0.25s ease-out;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Para manter o botão de logout na parte inferior */
+    justify-content: space-between;
 }
 
 #wrapper.toggled #sidebar-wrapper {
@@ -39,37 +39,37 @@ body {
 
 .sidebar-heading {
     font-size: 1.5rem;
-    color: #ffffff; /* Cor do texto da sidebar */
+    color: #ffffff;
     text-align: center;
     padding: 1rem;
-    margin-bottom: 20px; /* Espaço abaixo do cabeçalho */
+    margin-bottom: 20px;
 }
 
 /* Efeito hover para os itens da sidebar */
 .list-group-item {
     border: none;
-    color: #ffffff; /* Cor do texto dos itens da sidebar */
-    background-color: #1b1b1b; /* Cor de fundo dos itens da sidebar */
-    padding: 15px 20px; /* Espaçamento interno dos itens */
+    color: #ffffff;
+    background-color: #1b1b1b;
+    padding: 15px 20px;
 }
 
 .list-group-item i {
-    margin-right: 10px; /* Espaço entre o ícone e o texto */
+    margin-right: 10px;
 }
 
 .list-group-item:hover {
-    background-color: #373737; /* Cor de fundo ao passar o mouse */
-    color: #ffffff; /* Cor do texto ao passar o mouse */
+    background-color: #373737;
+    color: #ffffff;
 }
 
 /* Estilo específico para o botão de logout */
 .sidebar-logout {
-    margin-top: auto; /* Alinha ao final da sidebar */
+    margin-top: auto;
 }
 
 /* Formulários */
 form {
-    background-color: #2d2d2d; /* Cor de fundo dos formulários */
+    background-color: #2d2d2d;
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
@@ -80,7 +80,7 @@ form {
 }
 
 label {
-    color: #ffffff; /* Cor do texto */
+    color: #ffffff;
 }
 
 input[type="text"],
@@ -92,7 +92,7 @@ textarea {
     border: 1px solid #ced4da;
     border-radius: 5px;
     background-color: #1d1d1d;
-    color: #ffffff; /* Cor do texto */
+    color: #ffffff;
 }
 
 input[type="text"]:focus,
@@ -125,34 +125,32 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #2d2d2d; /* Cor de fundo das tabelas */
+    background-color: #2d2d2d;
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
 }
 
 th, td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #3a3a3a; /* Cor da borda */
+    border-bottom: 1px solid #3a3a3a;
 }
 
 th {
-    background-color: #1b1b1b; /* Cor de fundo do cabeçalho */
-    color: #ffffff; /* Cor do texto do cabeçalho */
+    background-color: #1b1b1b;
+    color: #ffffff;
 }
 
 td {
-    background-color: #333333; /* Cor de fundo das células */
-    color: #ffffff; /* Cor do texto das células */
+    background-color: #333333;
+    color: #ffffff;
 }
 
-/* Estilo para as linhas alternadas da tabela */
 tr:nth-child(even) td {
-    background-color: #444444; /* Linha alternada */
+    background-color: #444444;
 }
 
-/* Estilo de hover para as células */
 tr:hover td {
-    background-color: #575757; /* Cor de fundo ao passar o mouse */
+    background-color: #575757;
 }
 
 /* Estilização da tabela de "Usuários - Professor" */
@@ -160,7 +158,7 @@ tr:hover td {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
-    background-color: #2d2d2d; /* Cor de fundo da tabela */
+    background-color: #2d2d2d;
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
 }
 
@@ -168,31 +166,29 @@ tr:hover td {
 .table-users td {
     padding: 15px;
     text-align: left;
-    border-bottom: 1px solid #3a3a3a; /* Borda fina para separar as células */
+    border-bottom: 1px solid #3a3a3a;
 }
 
 .table-users th {
-    background-color: #1b1b1b; /* Cor de fundo do cabeçalho */
-    color: #ffffff; /* Cor do texto do cabeçalho */
+    background-color: #1b1b1b;
+    color: #ffffff;
 }
 
 .table-users td {
-    background-color: #333333; /* Cor de fundo das células */
-    color: #ffffff; /* Cor do texto das células */
+    background-color: #333333;
+    color: #ffffff;
 }
 
-/* Alternar a cor das linhas para melhor legibilidade */
 .table-users tr:nth-child(even) td {
-    background-color: #444444; /* Linha alternada */
+    background-color: #444444;
 }
 
 .table-users tr:hover td {
-    background-color: #575757; /* Cor de fundo ao passar o mouse */
+    background-color: #575757;
 }
 
-/* Estilização das ações (editar, excluir) na tabela */
 .table-users .btn {
-    background-color: #007bff; /* Cor do botão (azul) */
+    background-color: #007bff;
     color: #ffffff;
     padding: 5px 10px;
     border-radius: 5px;
@@ -200,29 +196,26 @@ tr:hover td {
     font-size: 0.875rem;
     text-decoration: none;
 }
-
 .table-users .btn:hover {
-    background-color: #0056b3; /* Cor de fundo ao passar o mouse */
+    background-color: #0056b3;
 }
 
-/* Ícones dos botões de ação (editar, excluir) */
 .table-users .btn-edit {
-    background-color: #28a745; /* Cor verde para o botão de editar */
+    background-color: #28a745;
 }
 
 .table-users .btn-delete {
-    background-color: #dc3545; /* Cor vermelha para o botão de excluir */
+    background-color: #dc3545;
 }
 
 .table-users .btn-edit:hover {
-    background-color: #218838; /* Cor verde mais escura ao passar o mouse */
+    background-color: #218838;
 }
 
 .table-users .btn-delete:hover {
-    background-color: #c82333; /* Cor vermelha mais escura ao passar o mouse */
+    background-color: #c82333;
 }
 
-/* Ajuste da largura das colunas, se necessário */
 .table-users th, .table-users td {
     width: auto;
 }
@@ -231,9 +224,9 @@ tr:hover td {
 footer {
     margin-top: 20px;
     padding: 10px;
-    background-color: #1b1b1b; /* Cor de fundo do footer */
+    background-color: #1b1b1b;
     text-align: center;
-    color: #ffffff; /* Cor do texto */
+    color: #ffffff;
 }
 
 /* Responsividade */
@@ -254,19 +247,17 @@ footer {
         font-size: 2rem;
     }
 
-    /* Ajuste na largura da tabela para a tela pequena */
     table {
         width: 100%;
         overflow-x: auto;
     }
 
-    /* Ajuste do layout para telas pequenas */
     #wrapper {
-        flex-direction: column; /* Sidebar vai ficar acima do conteúdo */
+        flex-direction: column;
     }
 
     #page-content-wrapper {
-        margin-left: 0; /* Remover o margin-left na tela pequena */
+        margin-left: 0;
         padding: 15px;
     }
 }
@@ -275,8 +266,8 @@ footer {
 #page-content-wrapper {
     flex-grow: 1;
     padding: 20px;
-    margin-left: 250px; /* Garantir que o conteúdo não sobreponha a sidebar */
-    background-color: #2d2d2d; /* Cor de fundo do conteúdo */
+    margin-left: 250px;
+    background-color: #2d2d2d;
 }
 
 /* Estilização do botão toggle */
@@ -286,7 +277,7 @@ footer {
 
 /* Cartões */
 .card {
-    background-color: #2d2d2d; /* Cor de fundo dos cartões */
+    background-color: #2d2d2d;
     box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
     border: none;
     border-radius: 5px;
@@ -294,8 +285,8 @@ footer {
 }
 
 .card-header {
-    background-color: #1b1b1b; /* Cor de fundo do cabeçalho do cartão */
-    color: #ffffff; /* Cor do texto do cabeçalho do cartão */
+    background-color: #1b1b1b;
+    color: #ffffff;
     border-bottom: none;
     border-radius: 5px 5px 0 0;
     padding: 15px;
@@ -303,21 +294,20 @@ footer {
 
 .card-body {
     padding: 15px;
-    background-color: #333333; /* Cor de fundo do corpo do cartão */
-    color: #ffffff; /* Cor do texto do corpo do cartão */
+    background-color: #333333;
+    color: #ffffff;
 }
 
-/* Adicionando um espaçamento entre as tabelas */
 #usuarios-tab .card {
-    margin-bottom: 20px; /* Altere o valor conforme necessário */
+    margin-bottom: 20px;
 }
 
 #usuarios-tab table {
-    margin-bottom: 20px; /* Altere o valor conforme necessário */
+    margin-bottom: 20px;
 }
 
 .tabela-principal {
-    border: 2px solid #ffffff; /* Apenas como exemplo */
+    border: 2px solid #ffffff;
     margin-bottom: 20px;
 }
 
@@ -358,4 +348,3 @@ footer {
 .search-bar button:hover {
     background-color: #0056b3;
 }
-

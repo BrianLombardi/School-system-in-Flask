@@ -49,6 +49,7 @@ class Materia(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
     carga_horaria = db.Column(db.Integer, nullable=False)
+
 # Rotas e funcionalidades
 @app.route('/')
 def index():
@@ -103,6 +104,7 @@ def register():
         return redirect(url_for('login'))
 
     return render_template('register.html')
+
 @app.route('/admin')
 def admin_dashboard():
     if 'user_id' in session and session.get('is_admin'):
@@ -110,26 +112,12 @@ def admin_dashboard():
         cargos = Cargo.query.all()
         users = User.query.all()
         materias = Materia.query.all()
-        return render_template('admin_dashboard.html', turmas=turmas, users=users, cargos=cargos, materias=materias)
+        professors = [user for user in users if any(cargo.nome == 'Professor' for cargo in user.cargos)]
+        return render_template('admin_dashboard.html', turmas=turmas, users=users, cargos=cargos, materias=materias, professors=professors)
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
         return redirect(url_for('login'))
 
-@app.route('/teacher_dashboard')
-def teacher_dashboard():
-    if 'user_id' in session and not session.get('is_admin'):
-        return render_template('teacher_dashboard.html', teacher_name=session.get('fullname'))
-    else:
-        flash("Acesso negado. Faça login como professor para acessar essa página.", "danger")
-        return redirect(url_for('login'))
-
-@app.route('/student_dashboard')
-def student_dashboard():
-    if 'user_id' in session and not session.get('is_admin'):
-        return render_template('student_dashboard.html', student_name=session.get('fullname'))
-    else:
-        flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
-        return redirect(url_for('login'))
 @app.route('/assignment_detail/<int:assignment_id>')
 def assignment_detail(assignment_id):
     if 'user_id' in session and not session.get('is_admin'):
@@ -167,6 +155,20 @@ def create_cargo():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
+@app.route('/edit_user/<int:user_id>', methods=['GET', 'POST'])
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    if request.method == 'POST':
+        user.fullname = request.form['fullname']
+        user.email = request.form['email']
+        # Adicione qualquer outro campo que precise ser editado
+        db.session.commit()
+        flash('Usuário atualizado com sucesso!', 'success')
+        return redirect(url_for('admin_dashboard'))
+    return render_template('edit_user.html', user=user)
+
+
 @app.route('/create_materia', methods=['POST'])
 def create_materia():
     if 'user_id' in session and session.get('is_admin'):
@@ -197,6 +199,7 @@ def assign_professor_to_materia(materia_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 @app.route('/add_user_to_turma/<int:turma_id>', methods=['POST'])
 def add_user_to_turma(turma_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -235,6 +238,38 @@ def logout():
     session.clear()
     flash('Você saiu com sucesso.', 'success')
     return redirect(url_for('index'))
+
+@app.route('/add_professor/<int:user_id>', methods=['POST'])
+def add_professor(user_id):
+    if 'user_id' in session and session.get('is_admin'):
+        user = db.session.get(User, user_id)
+        if user:
+            print(f"Usuário encontrado: {user.fullname}")
+            professor_cargo = Cargo.query.filter_by(nome='Professor').first()
+            if not professor_cargo:
+                print("Cargo 'Professor' não encontrado, criando novo cargo.")
+                professor_cargo = Cargo(nome='Professor', descricao='Professor na escola')
+                db.session.add(professor_cargo)
+                db.session.commit()
+            if professor_cargo not in user.cargos:
+                print(f"Adicionando cargo 'Professor' ao usuário {user.fullname}.")
+                user.cargos.append(professor_cargo)
+                db.session.commit()
+                print(f"Usuário {user.fullname} agora é um professor.")
+                flash('Usuário transformado em professor com sucesso!', 'success')
+            else:
+                print(f"Usuário {user.fullname} já é um professor.")
+                flash('Usuário já é um professor!', 'info')
+        else:
+            print("Usuário não encontrado!")
+            flash('Usuário não encontrado!', 'danger')
+    else:
+        print("Acesso negado. Faça login como administrador.")
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+
+
 def create_db():
     db.create_all()
     if not User.query.filter_by(email='admin@exemplo.com').first():
@@ -248,6 +283,7 @@ if __name__ == '__main__':
     with app.app_context():
         create_db()
     app.run(debug=True)
+
 # Definição do modelo de aluno
 class Aluno(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -264,33 +300,16 @@ class Turma(db.Model):
 
 @app.route('/')
 def index():
-    # Exibe uma lista de todas as turmas
     turmas = Turma.query.all()
     return render_template('index.html', turmas=turmas)
 
 @app.route('/turma/<int:turma_id>/alunos')
 def turma_alunos(turma_id):
-    # Recupera todos os alunos da turma especificada
     turma = Turma.query.get_or_404(turma_id)
     alunos = Aluno.query.filter_by(turma_id=turma.id).all()
-    
     return render_template('turma_alunos.html', turma=turma, alunos=alunos)
-
-if __name__ == '__main__':
-    db.create_all()  # Cria as tabelas do banco de dados
-    app.run(debug=True)
-
-@app.route('/add_professor/<int:user_id>', methods=['POST'])
-def add_professor(user_id):
-    user = User.query.get(user_id)
-    if user:
-        user.cargo = 'Professor'
-        db.session.commit()
-    return redirect(url_for('admin_dashboard_users'))
 
 @app.route('/admin_dashboard')
 def admin_dashboard():
-    # Consulta para pegar os usuários com o cargo de 'professor'
-    professors = User.query.filter_by(role='professor').all()  # Ou o campo correto para o cargo
-
+    professors = User.query.filter_by(role='professor').all()
     return render_template('admin_dashboard.html', professors=professors)

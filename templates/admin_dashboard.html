@@ -222,9 +222,8 @@
     <button class="toggle-sidebar" onclick="toggleSidebar()">
         <i class="fas fa-bars"></i>
     </button>
-
     <div class="sidebar" id="sidebar">
-        <a href="#" onclick="showTab('usuarios')" id="usuarios-link"><i class="fas fa-users"></i> Usuários</a>
+        <a href="#" onclick="showTab('usuarios')" id="usuarios-link" class="active"><i class="fas fa-users"></i> Usuários</a>
         <a href="#" onclick="showTab('turmas')" id="turmas-link"><i class="fas fa-book"></i> Turmas</a>
         <a href="#" onclick="showTab('materias')" id="materias-link"><i class="fas fa-chalkboard"></i> Matérias</a>
         <a href="#" onclick="showTab('cargos')" id="cargos-link"><i class="fas fa-briefcase"></i> Cargos</a>
@@ -234,219 +233,267 @@
     <div class="main-content" id="main-content">
         <div class="dashboard-header">Painel Administrativo</div>
 
- <!-- Aba de Usuários -->
-<div class="tab-content" id="usuarios-tab">
-    <h4>Usuários</h4>
-    <div class="search-bar">
-        <input type="text" id="search" placeholder="Pesquisar por nome ou email" onkeyup="searchUsers()">
-    </div>
-    <table class="table-users tabela-principal">
-        <thead>
-            <tr>
-                <th colspan="4" class="table-title">Tabela Principal</th>
-            </tr>
-            <tr>
-                <th>ID</th>
-                <th>Nome Completo</th>
-                <th>Email</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody id="usuarios-tbody">
-            {% for user in users %}
-            <tr>
-                <td>{{ user.id }}</td>
-                <td>{{ user.fullname }}</td>
-                <td>{{ user.email }}</td>
-                <td>
-                    <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST">
-                        <button type="submit" class="btn btn-danger">Deletar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <!-- Tabela de Usuários - Professores -->
-    <div class="card">
-        <div class="card-header">
-            <h3 class="card-title">Usuários - Professores</h3>
-        </div>
-        <div class="card-body">
-            <!-- Barra de Pesquisa -->
+        <!-- Aba de Usuários -->
+        <div class="tab-content" id="usuarios-tab">
+            <h4>Usuários</h4>
             <div class="search-bar">
-                <input type="text" id="search" placeholder="Pesquisar por nome ou cargo" onkeyup="searchUsers()">
+                <input type="text" id="search" placeholder="Pesquisar por nome ou email" onkeyup="searchUsers()">
+                <button onclick="searchUsers()">Pesquisar</button>
             </div>
-            
-            <table id="tabela-principal" class="table table-bordered table-striped table-sm">
+            <table class="table-users tabela-principal">
+                <thead>
+                    <tr>
+                        <th colspan="5" class="table-title">Tabela Principal</th>
+                    </tr>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome Completo</th>
+                        <th>Email</th>
+                        <th>Cargo</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="usuarios-tbody">
+                    {% for user in users %}
+                    {% set is_professor = False %}
+                    {% set cargos = user.cargos | map(attribute='nome') | list %}
+                    {% if 'Professor' in cargos %}
+                        {% set is_professor = True %}
+                    {% endif %}
+                    {% if not is_professor %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.fullname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{% if cargos %}{{ cargos | join(', ') }}{% else %}Aluno{% endif %}</td>
+                        <td>
+                            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Deletar</button>
+                            </form>
+                            <form action="{{ url_for('add_professor', user_id=user.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-success">Tornar Professor</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Tabela de Usuários - Professores -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Usuários - Professores</h3>
+                </div>
+                <div class="card-body">
+                    <div class="search-bar">
+                        <input type="text" id="search-professor" placeholder="Pesquisar por nome" onkeyup="searchProfessors()">
+                        <button onclick="searchProfessors()">Pesquisar</button>
+                    </div>
+                    <table id="tabela-professores" class="table table-bordered table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Cargo</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="professores-tbody">
+                            {% for user in users %}
+                                {% set is_professor = False %}
+                                {% set cargos = user.cargos | map(attribute='nome') | list %}
+                                {% if 'Professor' in cargos %}
+                                    {% set is_professor = True %}
+                                {% endif %}
+                                {% if is_professor %}
+                                    <tr>
+                                        <td>{{ user.id }}</td>
+                                        <td>{{ user.fullname }}</td>
+                                        <td>{{ cargos | join(', ') }}</td>
+                                        <td>
+                                            <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-warning btn-sm">Editar</a>
+                                            <a href="{{ url_for('delete_user', user_id=user.id) }}" class="btn btn-danger btn-sm">Excluir</a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- Aba de Turmas -->
+        <div class="tab-content hidden" id="turmas-tab">
+            <h4>Turmas</h4>
+            <form action="{{ url_for('create_turma') }}" method="POST">
+                <div class="form-group">
+                    <label for="nome">Nome:</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Descrição:</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Criar Turma</button>
+            </form>
+            <table>
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Cargo</th>
-                        <th>Ações</th>
+                        <th>Descrição</th>
                     </tr>
                 </thead>
-                <tbody id="usuarios-tbody">
-                    {% for professor in professors %}
+                <tbody>
+                    {% for turma in turmas %}
                     <tr>
-                        <td>{{ professor.id }}</td>
-                        <td>{{ professor.name }}</td>
-                        <td>{{ professor.role }}</td>
-                        <td>
-                            <a href="{{ url_for('edit_user', user_id=professor.id) }}" class="btn btn-warning btn-sm">Editar</a>
-                            <a href="{{ url_for('delete_user', user_id=professor.id) }}" class="btn btn-danger btn-sm">Excluir</a>
-                        </td>
+                        <td>{{ turma.id }}</td>
+                        <td>{{ turma.nome }}</td>
+                        <td>{{ turma.descricao }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Aba de Matérias -->
+        <div class="tab-content hidden" id="materias-tab">
+            <h4>Matérias</h4>
+            <form action="{{ url_for('create_materia') }}" method="POST">
+                <div class="form-group">
+                    <label for="nome_materia">Nome da Matéria:</label>
+                    <input type="text" class="form-control" id="nome_materia" name="nome_materia" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao_materia">Descrição da Matéria:</label>
+                    <textarea class="form-control" id="descricao_materia" name="descricao_materia" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="carga_horaria">Carga Horária:</label>
+                    <input type="number" class="form-control" id="carga_horaria" name="carga_horaria" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Criar Matéria</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                        <th>Carga Horária</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for materia in materias %}
+                    <tr>
+                        <td>{{ materia.id }}</td>
+                        <td>{{ materia.nome }}</td>
+                        <td>{{ materia.descricao }}</td>
+                        <td>{{ materia.carga_horaria }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Aba de Cargos -->
+        <div class="tab-content hidden" id="cargos-tab">
+            <h4>Cargos</h4>
+            <form action="{{ url_for('create_cargo') }}" method="POST">
+                <div class="form-group">
+                    <label for="nome">Nome do Cargo:</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="descricao">Descrição do Cargo:</label>
+                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Criar Cargo</button>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Descrição</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cargo in cargos %}
+                    <tr>
+                        <td>{{ cargo.id }}</td>
+                        <td>{{ cargo.nome }}</td>
+                        <td>{{ cargo.descricao }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-</div>
 
-<!-- Remova a tabela de "Usuários - Professores" das outras abas -->
+    <script>
+        function toggleSidebar() {
+            document.getElementById("sidebar").classList.toggle("hidden");
+            document.getElementById("main-content").classList.toggle("expanded");
+        }
 
-
-<!-- Função de busca -->
-<script>
-    function searchUsers() {
-        const query = document.getElementById("search").value.toLowerCase(); // Obtém o texto da busca
-        const rows = document.querySelectorAll("#usuarios-tbody tr"); // Seleciona as linhas do tbody da tabela
-
-        rows.forEach(row => {
-            const name = row.cells[1].textContent.toLowerCase(); // Nome completo
-            const email = row.cells[2].textContent.toLowerCase(); // Email
-
-            // Se o nome ou email contiverem a consulta, mostramos a linha, senão ocultamos
-            if (name.includes(query) || email.includes(query)) {
-                row.style.display = ""; // Exibe a linha
-            } else {
-                row.style.display = "none"; // Oculta a linha
+        function showTab(tabId) {
+            var tabs = document.getElementsByClassName('tab-content');
+            for (var i = 0; i < tabs.length; i++) {
+                tabs[i].classList.add('hidden');
             }
-        });
-    }
-</script>
-<!-- Aba de Turmas -->
-<div class="tab-content" id="turmas-tab" class="hidden">
-    <h4>Turmas</h4>
-    <form action="{{ url_for('create_turma') }}" method="POST">
-        <div class="form-group">
-            <label for="nome">Nome da Turma</label>
-            <input type="text" id="nome" name="nome" class="form-control" required>
-        </div>
-        <div class="form-group">
-            <label for="descricao">Descrição</label>
-            <input type="text" id="descricao" name="descricao" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-custom">Criar Turma</button>
-    </form>
+            document.getElementById(tabId + '-tab').classList.remove('hidden');
 
-    <hr>
+            // Atualizar o estado de navegação ativa
+            var links = document.getElementsByClassName('sidebar')[0].getElementsByTagName('a');
+            for (var i = 0; i < links.length; i++) {
+                links[i].classList.remove('active');
+            }
+            document.getElementById(tabId + '-link').classList.add('active');
+        }
 
-    <h5>Lista de Turmas</h5>
-    <table>
-        <thead>
-            <tr>
-                <th>Nome</th>
-                <th>Descrição</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for turma in turmas %}
-            <tr>
-                <td>{{ turma.nome }}</td>
-                <td>{{ turma.descricao }}</td>
-                <td>
-                    <form action="/delete_turma/{{ turma.id }}" method="POST">
-                        <button type="submit" class="btn btn-danger">Deletar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+        function searchUsers() {
+            let input = document.getElementById('search');
+            let filter = input.value.toLowerCase();
+            let tbody = document.getElementById('usuarios-tbody');
+            let tr = tbody.getElementsByTagName('tr');
 
-<!-- Aba de Matérias -->
-<div class="tab-content" id="materias-tab" class="hidden">
-    <h4>Matérias</h4>
-    <form action="{{ url_for('create_materia') }}" method="POST">
-        <div class="form-group">
-            <label for="nome">Nome da Matéria</label>
-            <input type="text" id="nome" name="nome" class="form-control" required>
-        </div>
-        <button type="submit" class="btn btn-custom">Adicionar Matéria</button>
-    </form>
-</div>
-
-<!-- Aba de Cargos -->
-<div class="tab-content" id="cargos-tab" class="hidden">
-    <h4>Cargos</h4>
-    <table>
-        <thead>
-            <tr>
-                <th>Cargo</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for cargo in cargos %}
-            <tr>
-                <td>{{ cargo.nome }}</td>
-                <td>
-                    <form action="/delete_cargo/{{ cargo.id }}" method="POST">
-                        <button type="submit" class="btn btn-danger">Deletar</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-<script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('hidden');
-        document.getElementById('main-content').classList.toggle('expanded');
-    }
-
-    function showTab(tabId) {
-        const tabs = document.querySelectorAll('.tab-content');
-        tabs.forEach(tab => tab.classList.add('hidden'));
-        const activeTab = document.getElementById(tabId + '-tab');
-        activeTab.classList.remove('hidden');
-
-        // Atualizar link ativo
-        const links = document.querySelectorAll('.sidebar a');
-        links.forEach(link => link.classList.remove('active'));
-        document.getElementById(tabId + '-link').classList.add('active');
-    }
-
-    function searchUsers() {
-        let input = document.getElementById('search').value.toLowerCase();
-        let table = document.getElementById('tabela-principal');
-        let rows = table.getElementsByTagName('tr');
-
-        for (let i = 1; i < rows.length; i++) {
-            let td = rows[i].getElementsByTagName('td');
-            if (td) {
-                let name = td[1].textContent || td[1].innerText;
-                let role = td[2].textContent || td[2].innerText;
-                if (name.toLowerCase().indexOf(input) > -1 || role.toLowerCase().indexOf(input) > -1) {
-                    rows[i].style.display = '';
-                } else {
-                    rows[i].style.display = 'none';
+            for (let i = 0; i < tr.length; i++) {
+                let tdName = tr[i].getElementsByTagName('td')[1];
+                let tdEmail = tr[i].getElementsByTagName('td')[2];
+                if (tdName || tdEmail) {
+                    let txtValueName = tdName.textContent || tdName.innerText;
+                    let txtValueEmail = tdEmail.textContent || tdEmail.innerText;
+                    if (txtValueName.toLowerCase().indexOf(filter) > -1 || txtValueEmail.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
                 }
             }
         }
-    }
 
-    // Mostrar tab inicial
-    showTab('usuarios');
-</script>
+        function searchProfessors() {
+            let input = document.getElementById('search-professor');
+            let filter = input.value.toLowerCase();
+            let tbody = document.getElementById('professores-tbody');
+            let tr = tbody.getElementsByTagName('tr');
 
+            for (let i = 0; i < tr.length; i++) {
+                let tdName = tr[i].getElementsByTagName('td')[1];
+                if (tdName) {
+                    let txtValueName = tdName.textContent || tdName.innerText;
+                    if (txtValueName.toLowerCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>

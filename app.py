@@ -18,42 +18,42 @@ class User(db.Model):
     turmas = db.relationship('Turma', secondary='user_turma', backref='usuarios')
     materias = db.relationship('Materia', secondary='user_materia', backref='professores')
     cargos = db.relationship('Cargo', secondary='user_cargo', backref='usuarios')
-
+    
 class Turma(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(200), nullable=False)
-
+    
 class Cargo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
-
+    
 class UserTurma(db.Model):
     __tablename__ = 'user_turma'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), primary_key=True)
-
+    
 class UserMateria(db.Model):
     __tablename__ = 'user_materia'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     materia_id = db.Column(db.Integer, db.ForeignKey('materia.id'), primary_key=True)
-
+    
 class UserCargo(db.Model):
     __tablename__ = 'user_cargo'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     cargo_id = db.Column(db.Integer, db.ForeignKey('cargo.id'), primary_key=True)
-
+    
 class Materia(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
     carga_horaria = db.Column(db.Integer, nullable=False)
-    # Rotas e funcionalidades
+
+# Rotas e funcionalidades
 @app.route('/')
 def index():
     return render_template('index.html')
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -116,6 +116,7 @@ def admin_dashboard():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
         return redirect(url_for('login'))
+
 @app.route('/assignment_detail/<int:assignment_id>')
 def assignment_detail(assignment_id):
     if 'user_id' in session and not session.get('is_admin'):
@@ -127,7 +128,6 @@ def assignment_detail(assignment_id):
     else:
         flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
         return redirect(url_for('login'))
-
 @app.route('/create_turma', methods=['POST'])
 def create_turma():
     if 'user_id' in session and session.get('is_admin'):
@@ -233,7 +233,6 @@ def add_professor(user_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/remove_professor/<int:user_id>', methods=['POST'])
 def remove_professor(user_id):
     user = User.query.get_or_404(user_id)
@@ -266,6 +265,7 @@ def assign_professor_to_materia(materia_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 @app.route('/add_user_to_turma/<int:turma_id>', methods=['POST'])
 def add_user_to_turma(turma_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -281,7 +281,6 @@ def add_user_to_turma(turma_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -304,6 +303,35 @@ def logout():
     session.clear()
     flash('Você saiu com sucesso.', 'success')
     return redirect(url_for('index'))
+
+@app.route('/edit_turma/<int:turma_id>', methods=['POST'])
+def edit_turma(turma_id):
+    turma = Turma.query.get_or_404(turma_id)
+    turma.nome = request.form['nome']
+    turma.descricao = request.form['descricao']
+    db.session.commit()
+    flash('Turma atualizada com sucesso!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/edit_materia/<int:materia_id>', methods=['POST'])
+def edit_materia(materia_id):
+    materia = Materia.query.get_or_404(materia_id)
+    materia.nome = request.form['nome']
+    materia.descricao = request.form['descricao']
+    materia.carga_horaria = request.form['carga_horaria']
+    db.session.commit()
+    flash('Matéria atualizada com sucesso!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/edit_cargo/<int:cargo_id>', methods=['POST'])
+def edit_cargo(cargo_id):
+    cargo = Cargo.query.get_or_404(cargo_id)
+    cargo.nome = request.form['nome']
+    cargo.descricao = request.form['descricao']
+    db.session.commit()
+    flash('Cargo atualizado com sucesso!', 'success')
+    return redirect(url_for('admin_dashboard'))
+
 def create_db():
     db.create_all()
     if not User.query.filter_by(email='admin@exemplo.com').first():
@@ -317,28 +345,3 @@ if __name__ == '__main__':
     with app.app_context():
         create_db()
     app.run(debug=True)
-
-# Definição do modelo de aluno
-class Aluno(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nome_completo = db.Column(db.String(100))
-    email = db.Column(db.String(100), unique=True)
-    turma_id = db.Column(db.Integer, db.ForeignKey('turma.id'), nullable=False)
-
-# Definição do modelo de turma
-class Turma(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    nome = db.Column(db.String(100))
-    descricao = db.Column(db.String(255))
-    alunos = db.relationship('Aluno', backref='turma', lazy=True)
-
-@app.route('/')
-def index():
-    turmas = Turma.query.all()
-    return render_template('index.html', turmas=turmas)
-
-@app.route('/turma/<int:turma_id>/alunos')
-def turma_alunos(turma_id):
-    turma = Turma.query.get_or_404(turma_id)
-    alunos = Aluno.query.filter_by(turma_id=turma.id).all()
-    return render_template('turma_alunos.html', turma=turma, alunos=alunos)

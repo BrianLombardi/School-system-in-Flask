@@ -185,7 +185,6 @@
             padding: 5px;
             font-size: 16px;
         }
-
         .search-bar button {
             background-color: #007BFF;
             color: white;
@@ -276,7 +275,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-
             <!-- Tabela de Usuários - Professores -->
             <div class="card">
                 <div class="card-header">
@@ -339,7 +337,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Criar Turma</button>
             </form>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -348,13 +346,23 @@
                         <th>Ações</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="turmas-tbody">
                     {% for turma in turmas %}
                     <tr>
                         <td>{{ turma.id }}</td>
-                        <td>{{ turma.nome }}</td>
-                        <td>{{ turma.descricao }}</td>
                         <td>
+                            <form action="{{ url_for('edit_turma', turma_id=turma.id) }}" method="POST">
+                                <input type="text" name="nome" value="{{ turma.nome }}" class="form-control" required>
+                                <input type="text" name="descricao" value="{{ turma.descricao }}" class="form-control" required>
+                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </form>                            
+                        </td>
+                        <td>
+                            <input type="text" name="descricao" value="{{ turma.descricao }}" class="form-control" required>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </form>
                             <form action="{{ url_for('delete_turma', turma_id=turma.id) }}" method="POST" style="display:inline;">
                                 <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
                             </form>
@@ -364,8 +372,6 @@
                 </tbody>
             </table>
         </div>
-        
-
         <!-- Aba de Matérias -->
         <div class="tab-content hidden" id="materias-tab">
             <h4>Matérias</h4>
@@ -384,7 +390,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Criar Matéria</button>
             </form>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -393,13 +399,27 @@
                         <th>Carga Horária</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="materias-tbody">
                     {% for materia in materias %}
                     <tr>
                         <td>{{ materia.id }}</td>
-                        <td>{{ materia.nome }}</td>
-                        <td>{{ materia.descricao }}</td>
-                        <td>{{ materia.carga_horaria }}</td>
+                        <td>
+                            <form action="{{ url_for('edit_materia', materia_id=materia.id) }}" method="POST">
+                                <input type="text" name="nome" value="{{ materia.nome }}" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="text" name="descricao" value="{{ materia.descricao }}" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="number" name="carga_horaria" value="{{ materia.carga_horaria }}" class="form-control" required>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </form>
+                            <form action="{{ url_for('delete_materia', materia_id=materia.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -419,7 +439,7 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Criar Cargo</button>
             </form>
-            <table>
+            <table class="table">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -427,12 +447,24 @@
                         <th>Descrição</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="cargos-tbody">
                     {% for cargo in cargos %}
                     <tr>
                         <td>{{ cargo.id }}</td>
-                        <td>{{ cargo.nome }}</td>
-                        <td>{{ cargo.descricao }}</td>
+                        <td>
+                            <form action="{{ url_for('edit_cargo', cargo_id=cargo.id) }}" method="POST">
+                                <input type="text" name="nome" value="{{ cargo.nome }}" class="form-control" required>
+                        </td>
+                        <td>
+                            <input type="text" name="descricao" value="{{ cargo.descricao }}" class="form-control" required>
+                        </td>
+                        <td>
+                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                            </form>
+                            <form action="{{ url_for('delete_cargo', cargo_id=cargo.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                            </form>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

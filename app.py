@@ -9,6 +9,7 @@ app.secret_key = 'sua_chave_secreta'
 db = SQLAlchemy(app)
 
 # Modelos
+# Modelo User
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     fullname = db.Column(db.String(100), nullable=False)
@@ -16,8 +17,9 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)
     is_admin = db.Column(db.Boolean, default=False)
     turmas = db.relationship('Turma', secondary='user_turma', backref='usuarios')
-    materias = db.relationship('Materia', secondary='user_materia', backref='professores')
+    materias = db.relationship('Materia', secondary='user_materia', backref='professores')  # Relacionamento atualizado
     cargos = db.relationship('Cargo', secondary='user_cargo', backref='usuarios')
+
     
 class Turma(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -38,6 +40,7 @@ class UserMateria(db.Model):
     __tablename__ = 'user_materia'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     materia_id = db.Column(db.Integer, db.ForeignKey('materia.id'), primary_key=True)
+
     
 class UserCargo(db.Model):
     __tablename__ = 'user_cargo'
@@ -49,6 +52,11 @@ class Materia(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     descricao = db.Column(db.String(255), nullable=False)
     carga_horaria = db.Column(db.Integer, nullable=False)
+    professor_atual_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    professor_atual = db.relationship('User', backref='materias_atual')
+
+
+
 
 # Rotas e funcionalidades
 @app.route('/')
@@ -249,23 +257,6 @@ def remove_professor(user_id):
         flash(f'Cargo de professor removido de {user.fullname}.', 'success')
     return redirect(url_for('admin_dashboard'))
 
-@app.route('/assign_professor_to_materia/<int:materia_id>', methods=['POST'])
-def assign_professor_to_materia(materia_id):
-    if 'user_id' in session and session.get('is_admin'):
-        user_id = request.form['user_id']
-        user = User.query.get(user_id)
-        materia = Materia.query.get(materia_id)
-
-        if user and materia and any(cargo.nome == 'Professor' for cargo in user.cargos):
-            user.materias.append(materia)
-            db.session.commit()
-            flash('Professor associado à matéria com sucesso!', 'success')
-        else:
-            flash('Usuário não encontrado, não é professor ou matéria não encontrada.', 'danger')
-    else:
-        flash('Acesso negado. Faça login como administrador.', 'danger')
-    return redirect(url_for('admin_dashboard'))
-
 @app.route('/add_user_to_turma/<int:turma_id>', methods=['POST'])
 def add_user_to_turma(turma_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -281,6 +272,7 @@ def add_user_to_turma(turma_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 @app.route('/delete_user/<int:user_id>', methods=['POST'])
 def delete_user(user_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -315,13 +307,26 @@ def edit_turma(turma_id):
 
 @app.route('/edit_materia/<int:materia_id>', methods=['POST'])
 def edit_materia(materia_id):
-    materia = Materia.query.get_or_404(materia_id)
-    materia.nome = request.form['nome']
-    materia.descricao = request.form['descricao']
-    materia.carga_horaria = request.form['carga_horaria']
-    db.session.commit()
-    flash('Matéria atualizada com sucesso!', 'success')
+    if 'user_id' in session and session.get('is_admin'):
+        materia = db.session.get(Materia, materia_id)
+        if materia:
+            materia.nome = request.form['nome']
+            materia.descricao = request.form['descricao']
+            materia.carga_horaria = request.form['carga_horaria']
+            
+            professor_atual_id = request.form['professor_atual_id']
+            professor_atual = db.session.get(User, professor_atual_id)
+            if professor_atual and any(cargo.nome == 'Professor' for cargo in professor_atual.cargos):
+                materia.professor_atual = professor_atual
+            
+            db.session.commit()
+            flash('Matéria atualizada com sucesso!', 'success')
+        else:
+            flash('Matéria não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 
 @app.route('/edit_cargo/<int:cargo_id>', methods=['POST'])
 def edit_cargo(cargo_id):
@@ -331,6 +336,25 @@ def edit_cargo(cargo_id):
     db.session.commit()
     flash('Cargo atualizado com sucesso!', 'success')
     return redirect(url_for('admin_dashboard'))
+
+
+@app.route('/assign_professor_to_materia/<int:materia_id>', methods=['POST'])
+def assign_professor_to_materia(materia_id):
+    if 'user_id' in session and session.get('is_admin'):
+        professor_id = request.form['professor_atual_id']
+        user = db.session.get(User, professor_id)
+        materia = db.session.get(Materia, materia_id)
+
+        if user and materia and any(cargo.nome == 'Professor' for cargo in user.cargos):
+            materia.professor_atual = user  # Atribuindo o professor atual
+            db.session.commit()
+            flash('Professor associado à matéria com sucesso!', 'success')
+        else:
+            flash('Usuário não encontrado, não é professor ou matéria não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
 
 def create_db():
     db.create_all()
@@ -345,3 +369,4 @@ if __name__ == '__main__':
     with app.app_context():
         create_db()
     app.run(debug=True)
+

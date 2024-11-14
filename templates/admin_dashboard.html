@@ -14,7 +14,6 @@
             color: #ffffff;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
         .sidebar {
             width: 250px;
             position: fixed;
@@ -25,7 +24,6 @@
             padding-top: 60px;
             transition: 0.3s;
         }
-
         .sidebar a {
             padding: 15px;
             font-size: 18px;
@@ -34,11 +32,9 @@
             text-decoration: none;
             transition: 0.3s;
         }
-
         .sidebar a:hover {
             background-color: #575757;
         }
-
         .sidebar .logout {
             position: absolute;
             bottom: 20px;
@@ -52,23 +48,19 @@
             border-top: 1px solid #555;
             transition: 0.3s;
         }
-
         .sidebar .logout:hover {
             background-color: #575757;
         }
-
         .main-content {
             margin-left: 250px;
             padding: 20px;
             transition: 0.3s;
         }
-
         .dashboard-header {
             font-size: 24px;
             font-weight: bold;
             margin-bottom: 20px;
         }
-
         .card {
             background-color: #2b2b2b;
             color: #ffffff;
@@ -79,11 +71,9 @@
             margin-bottom: 20px;
             transition: transform 0.3s;
         }
-
         .card:hover {
             transform: translateY(-5px);
         }
-
         .btn-custom {
             background-color: #4CAF50;
             color: #ffffff;
@@ -92,11 +82,9 @@
             border-radius: 5px;
             transition: background-color 0.3s;
         }
-
         .btn-custom:hover {
             background-color: #45a049;
         }
-
         table {
             width: 100%;
             margin-top: 20px;
@@ -105,26 +93,21 @@
             border-radius: 8px;
             overflow: hidden;
         }
-
         th,
         td {
             padding: 10px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
         th {
             background-color: #444;
         }
-
         tr:nth-child(even) {
             background-color: #2b2b2b;
         }
-
         tr:hover {
             background-color: #575757;
         }
-
         .btn-danger {
             background-color: #dc3545;
             border: none;
@@ -133,11 +116,9 @@
             color: white;
             transition: background-color 0.3s;
         }
-
         .btn-danger:hover {
             background-color: #c82333;
         }
-
         .toggle-sidebar {
             position: fixed;
             top: 10px;
@@ -150,68 +131,17 @@
             cursor: pointer;
             z-index: 1000;
         }
-
         .sidebar.hidden {
             left: -250px;
         }
-
         .main-content.expanded {
             margin-left: 0;
         }
-
         .tab-content {
             padding: 20px;
         }
-
         .tab-content.hidden {
             display: none;
-        }
-
-        /* Estilo de navegação ativa */
-        .sidebar a.active {
-            background-color: #575757;
-            color: white;
-        }
-
-        .search-bar {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .search-bar input {
-            width: 75%;
-            padding: 5px;
-            font-size: 16px;
-        }
-        .search-bar button {
-            background-color: #007BFF;
-            color: white;
-            padding: 5px 10px;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .search-bar button:hover {
-            background-color: #0056b3;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
-
-            .main-content {
-                margin-left: 200px;
-            }
-
-            .toggle-sidebar {
-                top: 10px;
-                left: 10px;
-            }
         }
     </style>
 </head>
@@ -275,54 +205,44 @@
                     {% endfor %}
                 </tbody>
             </table>
-            <!-- Tabela de Usuários - Professores -->
-            <div class="card">
-                <div class="card-header">
-                    <h3 class="card-title">Usuários - Professores</h3>
-                </div>
-                <div class="card-body">
-                    <div class="search-bar">
-                        <input type="text" id="search-professor" placeholder="Pesquisar por nome" onkeyup="searchProfessors()">
-                        <button onclick="searchProfessors()">Pesquisar</button>
-                    </div>
-                    <table id="tabela-professores" class="table table-bordered table-striped table-sm">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Cargo</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="professores-tbody">
-                            {% for user in users %}
-                                {% set is_professor = False %}
-                                {% set cargos = user.cargos | map(attribute='nome') | list %}
-                                {% if 'Professor' in cargos %}
-                                    {% set is_professor = True %}
-                                {% endif %}
-                                {% if is_professor %}
-                                    <tr>
-                                        <td>{{ user.id }}</td>
-                                        <td>{{ user.fullname }}</td>
-                                        <td>{{ cargos | join(', ') }}</td>
-                                        <td>
-                                            <form action="{{ url_for('remove_professor', user_id=user.id) }}" method="POST" style="display:inline;">
-                                                <button type="submit" class="btn btn-warning btn-sm">Retirar Cargo de Professor</button>
-                                            </form>
-                                            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
-                                                <button type="submit" class="btn btn-danger btn-sm">Excluir</button>
-                                            </form>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+            <h4>Professores</h4>
+            <table class="table-users tabela-professores">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome Completo</th>
+                        <th>Email</th>
+                        <th>Matérias</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody id="professores-tbody">
+                    {% for user in users %}
+                    {% set is_professor = False %}
+                    {% set cargos = user.cargos | map(attribute='nome') | list %}
+                    {% if 'Professor' in cargos %}
+                        {% set is_professor = True %}
+                    {% endif %}
+                    {% if is_professor %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.fullname }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{% for materia in user.materias %}{{ materia.nome }}{% if not loop.last %}, {% endif %}{% endfor %}</td>
+                        <td>
+                            <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-danger">Deletar</button>
+                            </form>
+                            <form action="{{ url_for('remove_professor', user_id=user.id) }}" method="POST" style="display:inline;">
+                                <button type="submit" class="btn btn-warning">Remover Professor</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
-        
         <!-- Aba de Turmas -->
         <div class="tab-content hidden" id="turmas-tab">
             <h4>Turmas</h4>
@@ -353,9 +273,6 @@
                         <td>
                             <form action="{{ url_for('edit_turma', turma_id=turma.id) }}" method="POST">
                                 <input type="text" name="nome" value="{{ turma.nome }}" class="form-control" required>
-                                <input type="text" name="descricao" value="{{ turma.descricao }}" class="form-control" required>
-                                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
-                            </form>                            
                         </td>
                         <td>
                             <input type="text" name="descricao" value="{{ turma.descricao }}" class="form-control" required>
@@ -372,10 +289,11 @@
                 </tbody>
             </table>
         </div>
+        
         <!-- Aba de Matérias -->
         <div class="tab-content hidden" id="materias-tab">
             <h4>Matérias</h4>
-            <form action="{{ url_for('create_materia') }}" method="POST">
+            <form action="{{ url_for('create_materia') }}" method="POST" class="mb-4">
                 <div class="form-group">
                     <label for="nome_materia">Nome da Matéria:</label>
                     <input type="text" class="form-control" id="nome_materia" name="nome_materia" required>
@@ -390,33 +308,44 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Criar Matéria</button>
             </form>
-            <table class="table">
-                <thead>
+            <table class="table table-hover table-bordered">
+                <thead class="thead-dark text-center">
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Descrição</th>
                         <th>Carga Horária</th>
+                        <th>Professor Atual</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="materias-tbody">
                     {% for materia in materias %}
                     <tr>
-                        <td>{{ materia.id }}</td>
-                        <td>
-                            <form action="{{ url_for('edit_materia', materia_id=materia.id) }}" method="POST">
+                        <td class="align-middle text-center">{{ materia.id }}</td>
+                        <td class="align-middle">
+                            <form action="{{ url_for('edit_materia', materia_id=materia.id) }}" method="POST" class="d-inline-block w-100">
                                 <input type="text" name="nome" value="{{ materia.nome }}" class="form-control" required>
                         </td>
-                        <td>
-                            <input type="text" name="descricao" value="{{ materia.descricao }}" class="form-control" required>
+                        <td class="align-middle">
+                                <textarea name="descricao" class="form-control" rows="1" required>{{ materia.descricao }}</textarea>
                         </td>
-                        <td>
-                            <input type="number" name="carga_horaria" value="{{ materia.carga_horaria }}" class="form-control" required>
+                        <td class="align-middle text-center">
+                                <input type="number" name="carga_horaria" value="{{ materia.carga_horaria }}" class="form-control" required>
                         </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                        <td class="align-middle">
+                                <select name="professor_atual_id" class="form-control form-control-sm" required>
+                                    {% for professor in professors %}
+                                        <option value="{{ professor.id }}" {% if materia.professor_atual and materia.professor_atual.id == professor.id %}selected{% endif %}>
+                                            {{ professor.fullname }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                        </td>
+                        <td class="align-middle text-center">
+                                <button type="submit" class="btn btn-warning btn-sm">Salvar</button>
                             </form>
-                            <form action="{{ url_for('delete_materia', materia_id=materia.id) }}" method="POST" style="display:inline;">
+                            <form action="{{ url_for('delete_materia', materia_id=materia.id) }}" method="POST" class="d-inline-block">
                                 <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
                             </form>
                         </td>
@@ -425,44 +354,44 @@
                 </tbody>
             </table>
         </div>
+        
         <!-- Aba de Cargos -->
         <div class="tab-content hidden" id="cargos-tab">
             <h4>Cargos</h4>
-            <form action="{{ url_for('create_cargo') }}" method="POST">
+            <form action="{{ url_for('create_cargo') }}" method="POST" class="mb-4">
                 <div class="form-group">
-                    <label for="nome">Nome do Cargo:</label>
-                    <input type="text" class="form-control" id="nome" name="nome" required>
+                    <label for="nome_cargo">Nome do Cargo:</label>
+                    <input type="text" class="form-control" id="nome_cargo" name="nome_cargo" required>
                 </div>
                 <div class="form-group">
-                    <label for="descricao">Descrição do Cargo:</label>
-                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+                    <label for="descricao_cargo">Descrição do Cargo:</label>
+                    <textarea class="form-control" id="descricao_cargo" name="descricao_cargo" rows="3" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Criar Cargo</button>
             </form>
-            <table class="table">
-                <thead>
+            <table class="table table-hover table-bordered">
+                <thead class="thead-dark text-center">
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
                         <th>Descrição</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="cargos-tbody">
                     {% for cargo in cargos %}
                     <tr>
-                        <td>{{ cargo.id }}</td>
-                        <td>
-                            <form action="{{ url_for('edit_cargo', cargo_id=cargo.id) }}" method="POST">
+                        <td class="align-middle text-center">{{ cargo.id }}</td>
+                        <td class="align-middle">{{ cargo.nome }}</td>
+                        <td class="align-middle">{{ cargo.descricao }}</td>
+                        <td class="align-middle text-center">
+                            <form action="{{ url_for('edit_cargo', cargo_id=cargo.id) }}" method="POST" class="d-inline-block w-100">
                                 <input type="text" name="nome" value="{{ cargo.nome }}" class="form-control" required>
-                        </td>
-                        <td>
-                            <input type="text" name="descricao" value="{{ cargo.descricao }}" class="form-control" required>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                                <textarea name="descricao" class="form-control" rows="1" required>{{ cargo.descricao }}</textarea>
+                                <button type="submit" class="btn btn-warning btn-sm mt-1">Salvar</button>
                             </form>
-                            <form action="{{ url_for('delete_cargo', cargo_id=cargo.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                            <form action="{{ url_for('delete_cargo', cargo_id=cargo.id) }}" method="POST" class="d-inline-block">
+                                <button type="submit" class="btn btn-danger btn-sm mt-1">Deletar</button>
                             </form>
                         </td>
                     </tr>
@@ -470,7 +399,8 @@
                 </tbody>
             </table>
         </div>
-    </div>
+        
+
 
     <script>
         function toggleSidebar() {

@@ -20,12 +20,26 @@ class User(db.Model):
     materias = db.relationship('Materia', secondary='user_materia', backref='professores')  # Relacionamento atualizado
     cargos = db.relationship('Cargo', secondary='user_cargo', backref='usuarios')
 
-    
 class Turma(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
-    descricao = db.Column(db.String(200), nullable=False)
-    
+    descricao = db.Column(db.String(255), nullable=False)
+    materias = db.relationship('Materia', secondary='turma_materia', backref=db.backref('turmas', lazy='dynamic'))
+    alunos = db.relationship('User', secondary='turma_aluno', backref=db.backref('turmas_associadas', lazy='dynamic'))
+    materias_visiveis = db.Column(db.Boolean, default=True)
+    alunos_visiveis = db.Column(db.Boolean, default=True)
+
+# Tabelas de Associação
+turma_materia = db.Table('turma_materia',
+    db.Column('turma_id', db.Integer, db.ForeignKey('turma.id'), primary_key=True),
+    db.Column('materia_id', db.Integer, db.ForeignKey('materia.id'), primary_key=True)
+)
+
+turma_aluno = db.Table('turma_aluno',
+    db.Column('turma_id', db.Integer, db.ForeignKey('turma.id'), primary_key=True),
+    db.Column('aluno_id', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 class Cargo(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
@@ -41,7 +55,6 @@ class UserMateria(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     materia_id = db.Column(db.Integer, db.ForeignKey('materia.id'), primary_key=True)
 
-    
 class UserCargo(db.Model):
     __tablename__ = 'user_cargo'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
@@ -54,14 +67,11 @@ class Materia(db.Model):
     carga_horaria = db.Column(db.Integer, nullable=False)
     professor_atual_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     professor_atual = db.relationship('User', backref='materias_atual')
-
-
-
-
 # Rotas e funcionalidades
 @app.route('/')
 def index():
     return render_template('index.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -120,11 +130,11 @@ def admin_dashboard():
         users = User.query.all()
         materias = Materia.query.all()
         professors = [user for user in users if any(cargo.nome == 'Professor' for cargo in user.cargos)]
-        return render_template('admin_dashboard.html', turmas=turmas, users=users, cargos=cargos, materias=materias, professors=professors)
+        alunos = [user for user in users if not any(cargo.nome == 'Professor' for cargo in user.cargos)]
+        return render_template('admin_dashboard.html', turmas=turmas, users=users, cargos=cargos, materias=materias, professors=professors, alunos=alunos)
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
         return redirect(url_for('login'))
-
 @app.route('/assignment_detail/<int:assignment_id>')
 def assignment_detail(assignment_id):
     if 'user_id' in session and not session.get('is_admin'):
@@ -136,6 +146,7 @@ def assignment_detail(assignment_id):
     else:
         flash("Acesso negado. Faça login como aluno para acessar essa página.", "danger")
         return redirect(url_for('login'))
+
 @app.route('/create_turma', methods=['POST'])
 def create_turma():
     if 'user_id' in session and session.get('is_admin'):
@@ -187,6 +198,7 @@ def create_materia():
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 @app.route('/delete_turma/<int:turma_id>', methods=['POST'])
 def delete_turma(turma_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -208,7 +220,6 @@ def delete_materia(materia_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/delete_cargo/<int:cargo_id>', methods=['POST'])
 def delete_cargo(cargo_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -241,6 +252,7 @@ def add_professor(user_id):
     else:
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
+
 @app.route('/remove_professor/<int:user_id>', methods=['POST'])
 def remove_professor(user_id):
     user = User.query.get_or_404(user_id)
@@ -304,7 +316,6 @@ def edit_turma(turma_id):
     db.session.commit()
     flash('Turma atualizada com sucesso!', 'success')
     return redirect(url_for('admin_dashboard'))
-
 @app.route('/edit_materia/<int:materia_id>', methods=['POST'])
 def edit_materia(materia_id):
     if 'user_id' in session and session.get('is_admin'):
@@ -327,7 +338,6 @@ def edit_materia(materia_id):
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
 
-
 @app.route('/edit_cargo/<int:cargo_id>', methods=['POST'])
 def edit_cargo(cargo_id):
     cargo = Cargo.query.get_or_404(cargo_id)
@@ -336,7 +346,6 @@ def edit_cargo(cargo_id):
     db.session.commit()
     flash('Cargo atualizado com sucesso!', 'success')
     return redirect(url_for('admin_dashboard'))
-
 
 @app.route('/assign_professor_to_materia/<int:materia_id>', methods=['POST'])
 def assign_professor_to_materia(materia_id):
@@ -355,6 +364,35 @@ def assign_professor_to_materia(materia_id):
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/toggle_materias_visiveis/<int:turma_id>', methods=['POST'])
+def toggle_materias_visiveis(turma_id):
+    if 'user_id' in session and session.get('is_admin'):
+        turma = db.session.get(Turma, turma_id)
+        if turma:
+            turma.materias_visiveis = not turma.materias_visiveis
+            db.session.commit()
+            status = "ativadas" if turma.materias_visiveis else "desativadas"
+            flash(f'Matérias {status} com sucesso!', 'success')
+        else:
+            flash('Turma não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/toggle_alunos_visiveis/<int:turma_id>', methods=['POST'])
+def toggle_alunos_visiveis(turma_id):
+    if 'user_id' in session and session.get('is_admin'):
+        turma = db.session.get(Turma, turma_id)
+        if turma:
+            turma.alunos_visiveis = not turma.alunos_visiveis
+            db.session.commit()
+            status = "ativados" if turma.alunos_visiveis else "desativados"
+            flash(f'Alunos {status} com sucesso!', 'success')
+        else:
+            flash('Turma não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
 
 def create_db():
     db.create_all()
@@ -365,8 +403,99 @@ def create_db():
         db.session.commit()
         print("Usuário administrador criado com sucesso.")
 
+def assign_alunos_to_turma(turma_id):
+    if 'user_id' in session and session.get('is_admin'):
+        aluno_ids = request.form.getlist('aluno_ids')
+        turma = Turma.query.get_or_404(turma_id)
+
+        if turma:
+            alunos = User.query.filter(User.id.in_(aluno_ids)).all()
+            turma.alunos = alunos  # Sobrescreve os alunos atuais com os selecionados
+            db.session.commit()
+            flash('Alunos adicionados à turma com sucesso!', 'success')
+        else:
+            flash('Turma não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+
+# Rota para adicionar matérias à turma
+@app.route('/assign_materias_to_turma/<int:turma_id>', methods=['POST'])
+def assign_materias_to_turma(turma_id):
+    if 'user_id' in session and session.get('is_admin'):
+        materia_ids = request.form.getlist('materia_ids')
+        turma = Turma.query.get_or_404(turma_id)
+
+        if turma:
+            for materia_id in materia_ids:
+                materia = Materia.query.get(materia_id)
+                if materia and materia not in turma.materias:
+                    turma.materias.append(materia)
+            db.session.commit()
+            flash('Matérias adicionadas à turma com sucesso!', 'success')
+        else:
+            flash('Turma não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+# Rota para adicionar alunos à turma
+@app.route('/assign_alunos_to_turma/<int:turma_id>', methods=['POST'])
+def assign_alunos_to_turma(turma_id):
+    if 'user_id' in session and session.get('is_admin'):
+        aluno_ids = request.form.getlist('aluno_ids')
+        turma = Turma.query.get_or_404(turma_id)
+
+        if turma:
+            for aluno_id in aluno_ids:
+                aluno = User.query.get(aluno_id)
+                if aluno and aluno not in turma.alunos:
+                    turma.alunos.append(aluno)
+            db.session.commit()
+            flash('Alunos adicionados à turma com sucesso!', 'success')
+        else:
+            flash('Turma não encontrada.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+
+
+@app.route('/remove_materia_from_turma/<int:turma_id>/<int:materia_id>', methods=['POST'])
+def remove_materia_from_turma(turma_id, materia_id):
+    if 'user_id' in session and session.get('is_admin'):
+        turma = db.session.get(Turma, turma_id)
+        materia = db.session.get(Materia, materia_id)
+        
+        if turma and materia and materia in turma.materias:
+            turma.materias.remove(materia)
+            db.session.commit()
+            flash('Matéria removida da turma com sucesso!', 'success')
+        else:
+            flash('Turma ou Matéria não encontradas.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+@app.route('/remove_aluno_from_turma/<int:turma_id>/<int:aluno_id>', methods=['POST'])
+def remove_aluno_from_turma(turma_id, aluno_id):
+    if 'user_id' in session and session.get('is_admin'):
+        turma = db.session.get(Turma, turma_id)
+        aluno = db.session.get(User, aluno_id)
+        
+        if turma and aluno and aluno in turma.alunos:
+            turma.alunos.remove(aluno)
+            db.session.commit()
+            flash('Aluno removido da turma com sucesso!', 'success')
+        else:
+            flash('Turma ou Aluno não encontrados.', 'danger')
+    else:
+        flash('Acesso negado. Faça login como administrador.', 'danger')
+    return redirect(url_for('admin_dashboard'))
+
+
 if __name__ == '__main__':
     with app.app_context():
         create_db()
     app.run(debug=True)
-

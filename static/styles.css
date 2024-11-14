@@ -348,3 +348,16 @@ footer {
 .search-bar button:hover {
     background-color: #0056b3;
 }
+
+/* Estilizando as listas de matérias e alunos */
+.list-group-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa; /* Adiciona fundo claro para visibilidade */
+    color: #343a40; /* Define a cor do texto */
+}
+.list-group-item:hover {
+    background-color: #e9ecef; /* Adiciona fundo mais escuro ao passar o mouse */
+}

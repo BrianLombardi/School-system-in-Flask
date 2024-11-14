@@ -243,52 +243,114 @@
                 </tbody>
             </table>
         </div>
+        
         <!-- Aba de Turmas -->
-        <div class="tab-content hidden" id="turmas-tab">
-            <h4>Turmas</h4>
-            <form action="{{ url_for('create_turma') }}" method="POST">
+        <div id="turmas-tab" class="tab-content hidden">
+            <h4 class="text-center mb-4">Turmas</h4>
+            <form action="{{ url_for('create_turma') }}" method="POST" class="mb-4 p-3 bg-secondary rounded">
                 <div class="form-group">
-                    <label for="nome">Nome:</label>
-                    <input type="text" class="form-control" id="nome" name="nome" required>
+                    <label for="nome_turma">Nome da Turma:</label>
+                    <input type="text" class="form-control" id="nome_turma" name="nome" required>
                 </div>
                 <div class="form-group">
-                    <label for="descricao">Descrição:</label>
-                    <textarea class="form-control" id="descricao" name="descricao" rows="3" required></textarea>
+                    <label for="descricao_turma">Descrição da Turma:</label>
+                    <textarea class="form-control" id="descricao_turma" name="descricao" rows="3" required></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Criar Turma</button>
             </form>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Descrição</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="turmas-tbody">
-                    {% for turma in turmas %}
-                    <tr>
-                        <td>{{ turma.id }}</td>
-                        <td>
-                            <form action="{{ url_for('edit_turma', turma_id=turma.id) }}" method="POST">
-                                <input type="text" name="nome" value="{{ turma.nome }}" class="form-control" required>
-                        </td>
-                        <td>
-                            <input type="text" name="descricao" value="{{ turma.descricao }}" class="form-control" required>
-                        </td>
-                        <td>
-                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
-                            </form>
-                            <form action="{{ url_for('delete_turma', turma_id=turma.id) }}" method="POST" style="display:inline;">
-                                <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
-                            </form>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-hover table-bordered table-striped">
+                    <thead class="thead-dark text-center">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>Descrição</th>
+                            <th>Matérias</th>
+                            <th>Alunos</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="turmas-tbody">
+                        {% for turma in turmas %}
+                        <tr>
+                            <td class="align-middle text-center">{{ turma.id }}</td>
+                            <td class="align-middle">
+                                <form action="{{ url_for('edit_turma', turma_id=turma.id) }}" method="POST" class="d-inline-block w-100">
+                                    <input type="text" name="nome" value="{{ turma.nome }}" class="form-control" required>
+                                </form>
+                            </td>
+                            <td class="align-middle">
+                                <textarea name="descricao" class="form-control" rows="1" required>{{ turma.descricao }}</textarea>
+                            </td>
+                            <td class="align-middle">
+                                <button type="button" class="btn btn-info btn-sm mt-1" onclick="toggleVisibility('materias{{ turma.id }}')">Ver/Esconder Matérias</button>
+                                <div id="materias{{ turma.id }}" class="mt-2" style="display: {{ 'block' if turma.materias_visiveis else 'none' }};">
+                                    <!-- Mostrar apenas as matérias já adicionadas -->
+                                    <ul class="list-group">
+                                        {% for materia in turma.materias %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ materia.nome }}
+                                            <form action="{{ url_for('remove_materia_from_turma', turma_id=turma.id, materia_id=materia.id) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                                            </form>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <form action="{{ url_for('assign_materias_to_turma', turma_id=turma.id) }}" method="POST" class="d-inline-block w-100 mt-2">
+                                        <div class="form-group">
+                                            <label for="materias">Selecionar Matérias:</label>
+                                            <input type="text" class="form-control mb-2" id="search-materias{{ turma.id }}" placeholder="Buscar Matérias...">
+                                            <select name="materia_ids" class="form-control" multiple required>
+                                                {% for materia in materias %}
+                                                <option value="{{ materia.id }}" class="materia-option">{{ materia.nome }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-1">Adicionar Matérias</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <button type="button" class="btn btn-info btn-sm mt-1" onclick="toggleVisibility('alunos{{ turma.id }}')">Ver/Esconder Alunos</button>
+                                <div id="alunos{{ turma.id }}" class="mt-2" style="display: {{ 'block' if turma.alunos_visiveis else 'none' }};">
+                                    <!-- Mostrar apenas os alunos já adicionados -->
+                                    <ul class="list-group">
+                                        {% for aluno in turma.alunos %}
+                                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                                            {{ aluno.fullname }}
+                                            <form action="{{ url_for('remove_aluno_from_turma', turma_id=turma.id, aluno_id=aluno.id) }}" method="POST" class="d-inline">
+                                                <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                                            </form>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    <form action="{{ url_for('assign_alunos_to_turma', turma_id=turma.id) }}" method="POST" class="d-inline-block w-100 mt-2">
+                                        <div class="form-group">
+                                            <label for="alunos">Selecionar Alunos:</label>
+                                            <input type="text" class="form-control mb-2" id="search-alunos{{ turma.id }}" placeholder="Buscar Alunos...">
+                                            <select name="aluno_ids" class="form-control" multiple required>
+                                                {% for aluno in alunos %}
+                                                <option value="{{ aluno.id }}" class="aluno-option">{{ aluno.fullname }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary btn-sm mt-1">Adicionar Alunos</button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="align-middle text-center">
+                                <button type="submit" class="btn btn-warning btn-sm">Salvar</button>
+                                <form action="{{ url_for('delete_turma', turma_id=turma.id) }}" method="POST" class="d-inline-block">
+                                    <button type="submit" class="btn btn-danger btn-sm">Deletar</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
+        
         
         <!-- Aba de Matérias -->
         <div class="tab-content hidden" id="materias-tab">
@@ -402,68 +464,113 @@
         
 
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById("sidebar").classList.toggle("hidden");
-            document.getElementById("main-content").classList.toggle("expanded");
+<script>
+    function toggleVisibility(id) {
+        var element = document.getElementById(id);
+        if (element.style.display === "none") {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
         }
-
-        function showTab(tabId) {
-            var tabs = document.getElementsByClassName('tab-content');
-            for (var i = 0; i < tabs.length; i++) {
-                tabs[i].classList.add('hidden');
+    }
+    
+    document.querySelectorAll('[id^=search-alunos]').forEach(function(searchBar) {
+        searchBar.addEventListener('input', function() {
+            var searchValue = this.value.toLowerCase();
+            var turmaId = this.id.replace('search-alunos', '');
+            var alunoOptions = document.querySelectorAll('#alunos' + turmaId + ' .aluno-option');
+    
+            for (var i = 0; i < alunoOptions.length; i++) {
+                var alunoText = alunoOptions[i].textContent.toLowerCase();
+                if (alunoText.includes(searchValue)) {
+                    alunoOptions[i].style.display = '';
+                } else {
+                    alunoOptions[i].style.display = 'none';
+                }
             }
-            document.getElementById(tabId + '-tab').classList.remove('hidden');
-
-            // Atualizar o estado de navegação ativa
-            var links = document.getElementsByClassName('sidebar')[0].getElementsByTagName('a');
-            for (var i = 0; i < links.length; i++) {
-                links[i].classList.remove('active');
+        });
+    });
+    
+    document.querySelectorAll('[id^=search-materias]').forEach(function(searchBar) {
+        searchBar.addEventListener('input', function() {
+            var searchValue = this.value.toLowerCase();
+            var turmaId = this.id.replace('search-materias', '');
+            var materiaOptions = document.querySelectorAll('#materias' + turmaId + ' .materia-option');
+    
+            for (var i = 0; i < materiaOptions.length; i++) {
+                var materiaText = materiaOptions[i].textContent.toLowerCase();
+                if (materiaText.includes(searchValue)) {
+                    materiaOptions[i].style.display = '';
+                } else {
+                    materiaOptions[i].style.display = 'none';
+                }
             }
-            document.getElementById(tabId + '-link').classList.add('active');
+        });
+    });
+    
+    function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("hidden");
+        document.getElementById("main-content").classList.toggle("expanded");
+    }
+    
+    function showTab(tabId) {
+        var tabs = document.getElementsByClassName('tab-content');
+        for (var i = 0; i < tabs.length; i++) {
+            tabs[i].classList.add('hidden');
         }
-
-        function searchUsers() {
-            let input = document.getElementById('search');
-            let filter = input.value.toLowerCase();
-            let tbody = document.getElementById('usuarios-tbody');
-            let tr = tbody.getElementsByTagName('tr');
-
-            for (let i = 0; i < tr.length; i++) {
-                let tdName = tr[i].getElementsByTagName('td')[1];
-                let tdEmail = tr[i].getElementsByTagName('td')[2];
-                if (tdName || tdEmail) {
-                    let txtValueName = tdName.textContent || tdName.innerText;
-                    let txtValueEmail = tdEmail.textContent || tdEmail.innerText;
-                    if (txtValueName.toLowerCase().indexOf(filter) > -1 || txtValueEmail.toLowerCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
+        document.getElementById(tabId + '-tab').classList.remove('hidden');
+    
+        // Atualizar o estado de navegação ativa
+        var links = document.getElementsByClassName('sidebar')[0].getElementsByTagName('a');
+        for (var i = 0; i < links.length; i++) {
+            links[i].classList.remove('active');
+        }
+        document.getElementById(tabId + '-link').classList.add('active');
+    }
+    
+    function searchUsers() {
+        let input = document.getElementById('search');
+        let filter = input.value.toLowerCase();
+        let tbody = document.getElementById('usuarios-tbody');
+        let tr = tbody.getElementsByTagName('tr');
+    
+        for (let i = 0; i < tr.length; i++) {
+            let tdName = tr[i].getElementsByTagName('td')[1];
+            let tdEmail = tr[i].getElementsByTagName('td')[2];
+            if (tdName || tdEmail) {
+                let txtValueName = tdName.textContent || tdName.innerText;
+                let txtValueEmail = tdEmail.textContent || tdEmail.innerText;
+                if (txtValueName.toLowerCase().indexOf(filter) > -1 || txtValueEmail.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
-
-        function searchProfessors() {
-            let input = document.getElementById('search-professor');
-            let filter = input.value.toLowerCase();
-            let tbody = document.getElementById('professores-tbody');
-            let tr = tbody.getElementsByTagName('tr');
-
-            for (let i = 0; i < tr.length; i++) {
-                let tdName = tr[i].getElementsByTagName('td')[1];
-                if (tdName) {
-                    let txtValueName = tdName.textContent || tdName.innerText;
-                    if (txtValueName.toLowerCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
+    }
+    
+    function searchProfessors() {
+        let input = document.getElementById('search-professor');
+        let filter = input.value.toLowerCase();
+        let tbody = document.getElementById('professores-tbody');
+        let tr = tbody.getElementsByTagName('tr');
+    
+        for (let i = 0; i < tr.length; i++) {
+            let tdName = tr[i].getElementsByTagName('td')[1];
+            if (tdName) {
+                let txtValueName = tdName.textContent || tdName.innerText;
+                if (txtValueName.toLowerCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
-    </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    }
+</script>
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+
 </body>
 </html>

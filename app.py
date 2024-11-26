@@ -494,6 +494,19 @@ def remove_aluno_from_turma(turma_id, aluno_id):
         flash('Acesso negado. Faça login como administrador.', 'danger')
     return redirect(url_for('admin_dashboard'))
 
+@app.route('/student_dashboard')
+def student_dashboard():
+    if 'user_id' in session and not session.get('is_admin'):
+        user = User.query.get(session['user_id'])
+        turmas = user.turmas_associadas  # Buscar turmas associadas ao aluno
+        aulas = []  # Inicializando a lista de aulas
+        for turma in turmas:
+            aulas += turma.aulas  # Adiciona as aulas de cada turma à lista
+        return render_template('student_dashboard.html', user=user, turmas=turmas, aulas=aulas)
+    else:
+        flash('Acesso negado. Faça login como aluno para acessar essa página.', 'danger')
+        return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     with app.app_context():

@@ -44,6 +44,7 @@
             border-color: #3700B3;
             color: #FFFFFF;
         }
+<<<<<<< HEAD
 
         .table-responsive {
             overflow-x: auto;
@@ -52,6 +53,8 @@
         .hidden {
             display: none;
         }
+=======
+>>>>>>> 26fa16e6584a6adff9657dab18ee39ecaf995e76
     </style>
 </head>
 
@@ -90,6 +93,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Minhas Aulas</h5>
                         <p class="card-text">Veja suas próximas aulas e horários.</p>
+<<<<<<< HEAD
                         <button class="btn btn-primary" onclick="toggleSection('aulas-section')">Ver Aulas</button>
                     </div>
                 </div>
@@ -151,12 +155,74 @@
                     </tbody>
                 </table>
             </div>
+=======
+                        <a href="#aulas-section" class="btn btn-primary">Ver Aulas</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Notas e Resultados</h5>
+                        <p class="card-text">Acesse suas notas e histórico acadêmico.</p>
+                        <a href="#notas-section" class="btn btn-primary">Ver Notas</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seção de Aulas -->
+        <div id="aulas-section" class="mt-5">
+            <h2>Aulas</h2>
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th>Matéria</th>
+                        <th>Horário</th>
+                        <th>Professor</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for aula in aulas %}
+                    <tr>
+                        <td>{{ aula.materia.nome }}</td>
+                        <td>{{ aula.horario }}</td>
+                        <td>{{ aula.professor.nome }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Seção de Notas -->
+        <div id="notas-section" class="mt-5">
+            <h2>Notas</h2>
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th>Matéria</th>
+                        <th>Nota</th>
+                        <th>Comentários</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for nota in notas %}
+                    <tr>
+                        <td>{{ nota.materia.nome }}</td>
+                        <td>{{ nota.valor }}</td>
+                        <td>{{ nota.comentarios }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+>>>>>>> 26fa16e6584a6adff9657dab18ee39ecaf995e76
         </div>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<<<<<<< HEAD
 
     <script>
         function toggleSection(sectionId) {
@@ -168,5 +234,7 @@
             }
         }
     </script>
+=======
+>>>>>>> 26fa16e6584a6adff9657dab18ee39ecaf995e76
 </body>
 </html>
